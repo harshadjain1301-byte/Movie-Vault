@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harshad's Movie Vault</title>
+<style>
+:root{
+  --bg:#0e0c10; --bg-panel:#17141a; --bg-card:#1e1a22;
+  --gold:#d9a441; --gold-dim:#8a6a2c; --marquee-red:#b4483c; --green:#6fae6f;
+  --text:#f1ece0; --text-dim:#a49c8f; --line:#2c2731;
+  --font-display:'Georgia','Times New Roman',serif;
+  --font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-mono:'Courier New',monospace;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);
+  background-image:radial-gradient(circle at 15% 0%, rgba(217,164,65,0.07), transparent 40%),
+    radial-gradient(circle at 85% 20%, rgba(180,72,60,0.06), transparent 45%);
+  color:var(--text);font-family:var(--font-body);min-height:100vh;}
+.header{padding:40px 24px 24px;text-align:center;border-bottom:1px solid var(--line);position:relative;}
+.header::before,.header::after{content:"";position:absolute;top:0;bottom:0;width:14px;
+  background-image:repeating-linear-gradient(to bottom,#000 0px,#000 10px,transparent 10px,transparent 20px);opacity:0.35;}
+.header::before{left:0;} .header::after{right:0;}
+.eyebrow{font-family:var(--font-mono);letter-spacing:3px;text-transform:uppercase;color:var(--gold-dim);font-size:11px;margin-bottom:8px;}
+h1{font-family:var(--font-display);font-size:clamp(26px,5vw,40px);margin:0 0 6px;color:var(--gold);font-weight:700;}
+.subtitle{color:var(--text-dim);font-size:13px;max-width:560px;margin:0 auto;line-height:1.5;}
+.stats{display:flex;justify-content:center;gap:24px;margin-top:16px;flex-wrap:wrap;}
+.stat{text-align:center;} .stat-num{font-family:var(--font-display);font-size:22px;color:var(--gold);}
+.stat-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);}
+
+.tabs{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;padding:18px 16px;
+  border-bottom:1px solid var(--line);background:var(--bg-panel);position:sticky;top:0;z-index:30;}
+.tab-btn{font-family:var(--font-mono);font-size:12px;background:transparent;border:1px solid var(--line);
+  color:var(--text-dim);padding:8px 14px;border-radius:3px;cursor:pointer;transition:all .15s;}
+.tab-btn:hover{border-color:var(--gold-dim);color:var(--text);}
+.tab-btn.active{background:var(--gold);border-color:var(--gold);color:#1a1408;font-weight:700;}
+
+.controls{max-width:1100px;margin:20px auto 0;padding:0 20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.controls input[type=text]{background:var(--bg-card);border:1px solid var(--line);color:var(--text);
+  padding:8px 12px;border-radius:4px;font-size:13px;flex:1;min-width:180px;}
+.chk{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim);cursor:pointer;}
+
+main{max-width:1100px;margin:0 auto;padding:26px 20px 90px;}
+
+.genre-section{margin-bottom:34px;}
+.genre-title{font-family:var(--font-display);font-size:22px;color:var(--gold);border-bottom:1px solid var(--gold-dim);
+  padding-bottom:7px;margin-bottom:16px;display:flex;align-items:baseline;gap:10px;}
+.genre-title .count{font-family:var(--font-mono);font-size:12px;color:var(--text-dim);}
+.time-block{margin-bottom:20px;margin-left:4px;}
+.time-title{font-family:var(--font-mono);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--marquee-red);margin-bottom:9px;padding-left:10px;border-left:2px solid var(--marquee-red);}
+.lang-group{margin-bottom:12px;margin-left:14px;}
+.lang-title{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;}
+.card{background:var(--bg-card);border:1px solid var(--line);border-radius:6px;padding:12px 14px;
+  transition:border-color .15s, transform .15s; position:relative;}
+.card:hover{border-color:var(--gold-dim);transform:translateY(-2px);}
+.card.watched{opacity:0.55;}
+.card-title{font-weight:600;font-size:14px;line-height:1.3;}
+.card-title a{color:inherit;text-decoration:none;}
+.card-title a:hover{color:var(--gold);}
+.card-year{color:var(--text-dim);font-size:12px;margin-top:2px;}
+.card-note{font-size:11px;color:var(--marquee-red);margin-top:6px;font-style:italic;}
+.card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;}
+.card-link{font-size:11px;color:var(--gold-dim);text-decoration:none;}
+.card-link:hover{color:var(--gold);}
+.watch-btn{font-family:var(--font-mono);font-size:10px;background:transparent;border:1px solid var(--line);
+  color:var(--text-dim);padding:4px 8px;border-radius:3px;cursor:pointer;}
+.watch-btn.on{border-color:var(--green);color:var(--green);}
+.watch-btn:hover{border-color:var(--green);color:var(--green);}
+
+.empty-msg{color:var(--text-dim);font-size:13px;padding:20px;text-align:center;}
+.section-note{color:var(--text-dim);font-size:13px;line-height:1.6;margin-bottom:20px;
+  background:var(--bg-panel);border:1px solid var(--line);border-radius:6px;padding:14px 16px;}
+.section-note b{color:var(--text);}
+
+.unid-list{display:flex;flex-direction:column;gap:10px;}
+.unid-item{background:var(--bg-card);border:1px solid var(--line);border-radius:6px;padding:14px 16px;}
+.unid-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start;}
+.unid-note{color:var(--text-dim);font-size:13px;flex:1;min-width:220px;}
+.unid-item > .unid-top > a{color:var(--gold-dim);font-family:var(--font-mono);font-size:12px;white-space:nowrap;text-decoration:none;}
+.unid-item > .unid-top > a:hover{color:var(--gold);}
+.resolve-btn{font-family:var(--font-mono);font-size:11px;background:transparent;border:1px solid var(--gold-dim);
+  color:var(--gold-dim);padding:6px 12px;border-radius:3px;cursor:pointer;margin-top:8px;}
+.resolve-btn:hover{border-color:var(--gold);color:var(--gold);}
+
+.resolve-form{margin-top:14px;border-top:1px dashed var(--line);padding-top:14px;display:none;}
+.resolve-form.open{display:block;}
+.entry-row{display:grid;grid-template-columns:1.6fr 0.7fr 1fr 1fr 1fr;gap:6px;margin-bottom:8px;align-items:center;}
+.entry-row input, .entry-row select{background:var(--bg);border:1px solid var(--line);color:var(--text);
+  padding:6px 8px;border-radius:4px;font-size:12px;width:100%;}
+.entry-row .rm-row{background:transparent;border:none;color:var(--marquee-red);cursor:pointer;font-size:14px;justify-self:start;}
+.type-toggle{display:flex;gap:8px;margin-bottom:10px;}
+.type-toggle label{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer;}
+.form-actions{display:flex;gap:8px;margin-top:10px;}
+.btn-primary{font-family:var(--font-mono);font-size:11px;background:var(--gold);border:none;color:#1a1408;
+  padding:7px 14px;border-radius:3px;cursor:pointer;font-weight:700;}
+.btn-secondary{font-family:var(--font-mono);font-size:11px;background:transparent;border:1px solid var(--line);
+  color:var(--text-dim);padding:7px 14px;border-radius:3px;cursor:pointer;}
+.add-row-btn{font-family:var(--font-mono);font-size:11px;background:transparent;border:1px dashed var(--line);
+  color:var(--text-dim);padding:6px 10px;border-radius:3px;cursor:pointer;margin-bottom:8px;}
+.add-row-btn:hover{border-color:var(--gold-dim);color:var(--gold-dim);}
+.lookup-btn{background:var(--bg-card);border:1px solid var(--line);color:var(--gold-dim);border-radius:4px;padding:0 10px;cursor:pointer;font-size:14px;}
+.lookup-btn:hover{border-color:var(--gold);color:var(--gold);}
+.lookup-status{font-size:10px;margin-top:3px;min-height:12px;}
+.field-label{font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-dim);margin-bottom:2px;}
+
+footer{text-align:center;padding:30px 20px 50px;color:var(--text-dim);font-size:11px;font-family:var(--font-mono);}
+.loading{text-align:center;padding:60px;color:var(--text-dim);}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="eyebrow">Instagram · Saved Collection</div>
+  <h1>The Movie Vault</h1>
+  <div class="subtitle">Genre &rarr; best time to watch &rarr; language. Resolve unreviewed posts, add new sections, and mark what you've watched — it all saves automatically.</div>
+  <div class="stats">
+    <div class="stat"><div class="stat-num" id="statMovies">-</div><div class="stat-label">Movies</div></div>
+    <div class="stat"><div class="stat-num" id="statSeries">-</div><div class="stat-label">Series</div></div>
+    <div class="stat"><div class="stat-num" id="statUnid">-</div><div class="stat-label">Needs Review</div></div>
+    <div class="stat"><div class="stat-num" id="statWatched">-</div><div class="stat-label">Watched</div></div>
+  </div>
+</div>
+
+<div class="tabs" id="tabs"></div>
+<div class="controls">
+  <input type="text" id="searchBox" placeholder="Search title, language, genre...">
+  <label class="chk"><input type="checkbox" id="hideWatched"> Hide watched</label>
+</div>
+<main id="main"><div class="loading">Loading your vault…</div></main>
+<div id="loginBox" style="display:none;max-width:320px;margin:20px auto 0;padding:16px;background:var(--bg-panel);border:1px solid var(--line);border-radius:6px;">
+  <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">Admin Sign In</div>
+  <input type="email" id="adminEmail" placeholder="Email" style="width:100%;margin-bottom:8px;background:var(--bg-card);border:1px solid var(--line);color:var(--text);padding:8px;border-radius:4px;font-size:13px;">
+  <input type="password" id="adminPass" placeholder="Password" style="width:100%;margin-bottom:8px;background:var(--bg-card);border:1px solid var(--line);color:var(--text);padding:8px;border-radius:4px;font-size:13px;">
+  <div id="loginStatus" style="font-size:11px;margin-bottom:8px;min-height:14px;"></div>
+  <button class="btn-primary" onclick="adminLogin()" style="width:100%;">Sign In</button>
+</div>
+<footer>
+  <span id="adminBadge" style="display:none;color:var(--green);">Admin mode &middot; <a href="#" onclick="adminLogout();return false;" style="color:var(--gold-dim);">Sign out</a> &middot; </span>
+  <a href="#" onclick="document.getElementById('loginBox').style.display = document.getElementById('loginBox').style.display==='none'?'block':'none'; return false;" style="color:var(--text-dim);text-decoration:none;" id="adminToggleLink">Admin</a>
+  &middot; Data updates live for everyone viewing this link &middot; "Best time to watch" is a suggested tag, not something Instagram stores
+</footer>
+
+<script>
+const SEED = {"movies": [{"title": "Dead Poets Society", "year": "1989", "genre": "Drama", "language": "English", "time": "Rainy Day / Cozy", "url": "https://www.instagram.com/reel/DTQTnqNCGsW/", "note": "", "subgenre": "Drama", "watched": false, "type": "movie", "id": "m0"}, {"title": "The Signature", "year": "2024", "genre": "Drama", "language": "Hindi", "time": "Family / Group Watch", "url": "https://www.instagram.com/reel/DRcoVd7Auw2/", "note": "Anupam Kher", "subgenre": "Drama", "watched": false, "type": "movie", "id": "m1"}, {"title": "3 Idiots", "year": "2009", "genre": "Drama", "language": "Hindi", "time": "Family / Group Watch", "url": "https://www.instagram.com/reel/DQjrrDvDNFk/", "note": "inferred from the Farhan's-father quote in caption — not named directly, medium confidence", "subgenre": "Drama/Comedy", "watched": false, "type": "movie", "id": "m2"}, {"title": "Idli Kadai", "year": "2025", "genre": "Drama", "language": "Tamil", "time": "Family / Group Watch", "url": "https://www.instagram.com/reel/DQggSRoEjPe/", "note": "Dhanush", "subgenre": "Drama", "watched": false, "type": "movie", "id": "m3"}, {"title": "Dono", "year": "2025", "genre": "Romance", "language": "Hindi", "time": "Date Night", "url": "https://www.instagram.com/reel/DMk3skzS1aV/", "note": "low confidence — inferred from 'Dono Movie' mention", "subgenre": "Romance", "watched": false, "type": "movie", "id": "m4"}, {"title": "God's Pocket", "year": "2014", "genre": "Drama", "language": "English", "time": "Late Night Solo", "url": "https://www.instagram.com/reel/DL7em3EoJHi/", "note": "Philip Seymour Hoffman", "subgenre": "Drama/Crime", "watched": false, "type": "movie", "id": "m5"}, {"title": "Kesari Chapter 2", "year": "2025", "genre": "Drama", "language": "Hindi", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/p/DIndFBOIW8D/", "note": "", "subgenre": "Courtroom Drama", "watched": false, "type": "movie", "id": "m6"}, {"title": "Court: State vs A Nobody", "year": "2025", "genre": "Drama", "language": "Hindi", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/p/DIndFBOIW8D/", "note": "", "subgenre": "Courtroom Drama", "watched": false, "type": "movie", "id": "m7"}, {"title": "Trauma", "year": "2017", "genre": "Horror", "language": "Hindi", "time": "Late Night Solo", "url": "https://www.instagram.com/reel/DHgcISxzZGC/", "note": "", "subgenre": "Horror/Thriller", "watched": false, "type": "movie", "id": "m8"}, {"title": "A Beautiful Mind", "year": "2001", "genre": "Thriller/Mystery", "language": "English", "time": "Rainy Day / Cozy", "url": "https://www.instagram.com/reel/C_2tHo3s0fo/", "note": "", "subgenre": "Drama/Thriller", "watched": false, "type": "movie", "id": "m9"}, {"title": "Titli", "year": "2014", "genre": "Drama", "language": "Hindi", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/C-4f3ZVvMIn/", "note": "hashtags say Malayalam/Mollywood but the actual 2014 Titli is Hindi — flagged, verify language", "subgenre": "Drama", "watched": false, "type": "movie", "id": "m10"}, {"title": "Aamis (Ravening)", "year": "2019", "genre": "Horror", "language": "Assamese", "time": "Late Night Solo", "url": "https://www.instagram.com/reel/C3xWUJqPPZ0/", "note": "", "subgenre": "Horror/Thriller", "watched": false, "type": "movie", "id": "m11"}, {"title": "Ajji", "year": "2017", "genre": "Horror", "language": "Hindi/Marathi", "time": "Late Night Solo", "url": "https://www.instagram.com/reel/C3xWUJqPPZ0/", "note": "", "subgenre": "Horror/Thriller", "watched": false, "type": "movie", "id": "m12"}, {"title": "Welcome Home", "year": "2020", "genre": "Horror", "language": "Malayalam", "time": "Late Night Solo", "url": "https://www.instagram.com/reel/C3xWUJqPPZ0/", "note": "", "subgenre": "Horror/Thriller", "watched": false, "type": "movie", "id": "m13"}, {"title": "The Holiday", "year": "2006", "genre": "Romance", "language": "English", "time": "Festive / Holiday", "url": "https://www.instagram.com/reel/C0K7lGHp7vn/", "note": "", "subgenre": "Romance", "watched": false, "type": "movie", "id": "m14"}, {"title": "About Time", "year": "2013", "genre": "Romance", "language": "English", "time": "Festive / Holiday", "url": "https://www.instagram.com/reel/C0K7lGHp7vn/", "note": "", "subgenre": "Romance", "watched": false, "type": "movie", "id": "m15"}, {"title": "Love Actually", "year": "2003", "genre": "Romance", "language": "English", "time": "Festive / Holiday", "url": "https://www.instagram.com/reel/C0K7lGHp7vn/", "note": "", "subgenre": "Romance", "watched": false, "type": "movie", "id": "m16"}, {"title": "A Serbian Film", "year": "2010", "genre": "Horror", "language": "Serbian", "time": "Late Night Solo", "url": "https://www.instagram.com/reel/CvCgG-fxM61/", "note": "extreme/disturbing content, flagged for content sensitivity", "subgenre": "Horror (extreme)", "watched": false, "type": "movie", "id": "m17"}, {"title": "Salo", "year": "1975", "genre": "Drama", "language": "Italian", "time": "Late Night Solo", "url": "https://www.instagram.com/reel/CvCgG-fxM61/", "note": "extreme/disturbing content, flagged for content sensitivity", "subgenre": "Drama (extreme)", "watched": false, "type": "movie", "id": "m18"}, {"title": "Irreversible", "year": "2002", "genre": "Thriller/Mystery", "language": "French", "time": "Late Night Solo", "url": "https://www.instagram.com/reel/CvCgG-fxM61/", "note": "extreme/disturbing content, flagged for content sensitivity", "subgenre": "Thriller (extreme)", "watched": false, "type": "movie", "id": "m19"}, {"title": "Court", "year": "2014", "genre": "Drama", "language": "Marathi/Hindi", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/CtiqCSjg0e0/", "note": "", "subgenre": "Drama", "watched": false, "type": "movie", "id": "m20"}, {"title": "Cinema Bandi", "year": "2021", "genre": "Comedy", "language": "Telugu", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/CtiqCSjg0e0/", "note": "", "subgenre": "Comedy/Drama", "watched": false, "type": "movie", "id": "m21"}, {"title": "Yeh Ballet", "year": "2020", "genre": "Drama", "language": "Hindi", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/CtiqCSjg0e0/", "note": "", "subgenre": "Drama", "watched": false, "type": "movie", "id": "m22"}, {"title": "Billu", "year": "2009", "genre": "Drama", "language": "Hindi", "time": "Family / Group Watch", "url": "https://www.instagram.com/reel/CtiqCSjg0e0/", "note": "", "subgenre": "Drama/Comedy", "watched": false, "type": "movie", "id": "m23"}, {"title": "A Death in the Gunj", "year": "2016", "genre": "Drama", "language": "English/Hindi", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/CtiqCSjg0e0/", "note": "", "subgenre": "Drama", "watched": false, "type": "movie", "id": "m24"}, {"title": "Nna Thaan Case Kodu", "year": "2022", "genre": "Comedy", "language": "Malayalam", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/CtiqCSjg0e0/", "note": "", "subgenre": "Comedy/Drama", "watched": false, "type": "movie", "id": "m25"}, {"title": "Call Me by Your Name", "year": "2017", "genre": "Romance", "language": "English", "time": "Rainy Day / Cozy", "url": "https://www.instagram.com/reel/CrMCSorujsI/", "note": "", "subgenre": "Drama/Romance", "watched": false, "type": "movie", "id": "m26"}, {"title": "Taxi Driver", "year": "1976", "genre": "Thriller/Mystery", "language": "English", "time": "Late Night Solo", "url": "https://www.instagram.com/reel/CrMCSorujsI/", "note": "", "subgenre": "Drama/Thriller", "watched": false, "type": "movie", "id": "m27"}, {"title": "Time Lapse", "year": "2014", "genre": "Sci-Fi", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/CrCIP73AggZ/", "note": "", "subgenre": "Sci-Fi/Thriller", "watched": false, "type": "movie", "id": "m28"}, {"title": "Level 16", "year": "2018", "genre": "Horror", "language": "English", "time": "Late Night Solo", "url": "https://www.instagram.com/reel/CqTk4jDDpXy/", "note": "", "subgenre": "Horror/Sci-Fi", "watched": false, "type": "movie", "id": "m29"}, {"title": "Coherence", "year": "2013", "genre": "Sci-Fi", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/CpYiWJnINKG/", "note": "", "subgenre": "Sci-Fi/Thriller", "watched": false, "type": "movie", "id": "m30"}, {"title": "Juno", "year": "2007", "genre": "Comedy", "language": "English", "time": "Weeknight Easy Watch", "url": "https://www.instagram.com/reel/CljHVkKoaRy/", "note": "", "subgenre": "Comedy/Drama", "watched": false, "type": "movie", "id": "m31"}, {"title": "The Peanut Butter Falcon", "year": "2019", "genre": "Drama", "language": "English", "time": "Weeknight Easy Watch", "url": "https://www.instagram.com/reel/CljHVkKoaRy/", "note": "", "subgenre": "Drama", "watched": false, "type": "movie", "id": "m32"}, {"title": "The Bucket List", "year": "2007", "genre": "Comedy", "language": "English", "time": "Weeknight Easy Watch", "url": "https://www.instagram.com/reel/CljHVkKoaRy/", "note": "", "subgenre": "Comedy/Drama", "watched": false, "type": "movie", "id": "m33"}, {"title": "Begin Again", "year": "2013", "genre": "Drama", "language": "English", "time": "Weeknight Easy Watch", "url": "https://www.instagram.com/reel/CljHVkKoaRy/", "note": "", "subgenre": "Drama/Music", "watched": false, "type": "movie", "id": "m34"}, {"title": "The Conjuring: Last Rites", "year": "2025", "genre": "Horror", "language": "English", "time": "Late Night Solo", "url": "https://www.instagram.com/reel/DN_XvWEjv8u/", "note": "", "subgenre": "Horror", "watched": false, "type": "movie", "id": "m35"}, {"title": "Parasite", "year": "2019", "genre": "Thriller/Mystery", "language": "Korean", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/DTXBR1NE3nO/", "note": "", "subgenre": "Thriller/Drama", "watched": false, "type": "movie", "id": "m36"}, {"title": "Memories of Murder", "year": "2003", "genre": "Crime/Heist", "language": "Korean", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/DTXBR1NE3nO/", "note": "", "subgenre": "Thriller/Crime", "watched": false, "type": "movie", "id": "m37"}, {"title": "The Host", "year": "2006", "genre": "Horror", "language": "Korean", "time": "Late Night Solo", "url": "https://www.instagram.com/reel/DTXBR1NE3nO/", "note": "", "subgenre": "Horror/Thriller", "watched": false, "type": "movie", "id": "m38"}, {"title": "Snowpiercer", "year": "2013", "genre": "Sci-Fi", "language": "Korean", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/DTXBR1NE3nO/", "note": "", "subgenre": "Sci-Fi/Thriller", "watched": false, "type": "movie", "id": "m39"}, {"title": "Kaleidoscope", "year": "2023", "genre": "Crime/Heist", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/Cld05R5jlow/", "note": "Netflix limited series", "subgenre": "Heist/Thriller", "watched": false, "type": "movie", "id": "m40"}, {"title": "What Happened to Monday", "year": "2017", "genre": "Sci-Fi", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/ClClOLAO6qo/", "note": "", "subgenre": "Sci-Fi/Thriller", "watched": false, "type": "movie", "id": "m41"}, {"title": "Se7en", "year": "1995", "genre": "Thriller/Mystery", "language": "English", "time": "Late Night Solo", "url": "https://www.instagram.com/p/CkdYOClv4II/", "note": "", "subgenre": "Thriller", "watched": false, "type": "movie", "id": "m42"}, {"title": "Primer", "year": "2004", "genre": "Sci-Fi", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/p/CkdYOClv4II/", "note": "", "subgenre": "Sci-Fi", "watched": false, "type": "movie", "id": "m43"}, {"title": "The Sixth Sense", "year": "1999", "genre": "Thriller/Mystery", "language": "English", "time": "Late Night Solo", "url": "https://www.instagram.com/p/CkdYOClv4II/", "note": "", "subgenre": "Thriller/Mystery", "watched": false, "type": "movie", "id": "m44"}, {"title": "Gone Girl", "year": "2014", "genre": "Thriller/Mystery", "language": "English", "time": "Late Night Solo", "url": "https://www.instagram.com/p/CkdYOClv4II/", "note": "", "subgenre": "Thriller", "watched": false, "type": "movie", "id": "m45"}, {"title": "Fight Club", "year": "1999", "genre": "Thriller/Mystery", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/p/CkdYOClv4II/", "note": "", "subgenre": "Drama/Thriller", "watched": false, "type": "movie", "id": "m46"}, {"title": "The Prestige", "year": "2006", "genre": "Drama", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/p/CkdYOClv4II/", "note": "", "subgenre": "Drama/Mystery", "watched": false, "type": "movie", "id": "m47"}, {"title": "Mirage", "year": "2018", "genre": "Sci-Fi", "language": "Spanish", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/p/ChfP4ZMv65b/", "note": "", "subgenre": "Thriller/Sci-Fi", "watched": false, "type": "movie", "id": "m48"}, {"title": "The Age of Adaline", "year": "2015", "genre": "Romance", "language": "English", "time": "Date Night", "url": "https://www.instagram.com/reel/Ce9MpJBAbMC/", "note": "", "subgenre": "Romance", "watched": false, "type": "movie", "id": "m49"}, {"title": "Drive", "year": "2011", "genre": "Thriller/Mystery", "language": "English", "time": "Late Night Solo", "url": "https://www.instagram.com/p/Ce3qRR0v_dc/", "note": "", "subgenre": "Drama/Thriller", "watched": false, "type": "movie", "id": "m50"}, {"title": "Her", "year": "2013", "genre": "Sci-Fi", "language": "English", "time": "Late Night Solo", "url": "https://www.instagram.com/p/Ce3qRR0v_dc/", "note": "", "subgenre": "Drama/Sci-Fi", "watched": false, "type": "movie", "id": "m51"}, {"title": "Amelie", "year": "2001", "genre": "Romance", "language": "French", "time": "Rainy Day / Cozy", "url": "https://www.instagram.com/p/Ce3qRR0v_dc/", "note": "", "subgenre": "Romance/Comedy", "watched": false, "type": "movie", "id": "m52"}, {"title": "Fallen Angels", "year": "1995", "genre": "Drama", "language": "Cantonese", "time": "Late Night Solo", "url": "https://www.instagram.com/p/Ce3qRR0v_dc/", "note": "", "subgenre": "Drama", "watched": false, "type": "movie", "id": "m53"}, {"title": "Magnolia", "year": "1999", "genre": "Drama", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/p/Ce3qRR0v_dc/", "note": "", "subgenre": "Drama", "watched": false, "type": "movie", "id": "m54"}, {"title": "Detachment", "year": "2011", "genre": "Drama", "language": "English", "time": "Late Night Solo", "url": "https://www.instagram.com/p/Ce3qRR0v_dc/", "note": "", "subgenre": "Drama", "watched": false, "type": "movie", "id": "m55"}, {"title": "Into the Wild", "year": "2007", "genre": "Drama", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/p/Ce3qRR0v_dc/", "note": "", "subgenre": "Drama/Adventure", "watched": false, "type": "movie", "id": "m56"}, {"title": "Now You See Me", "year": "2013", "genre": "Crime/Heist", "language": "English", "time": "Weeknight Easy Watch", "url": "https://www.instagram.com/p/CctIJV-vNBL/", "note": "", "subgenre": "Heist/Thriller", "watched": false, "type": "movie", "id": "m57"}, {"title": "Now You See Me 2", "year": "2016", "genre": "Crime/Heist", "language": "English", "time": "Weeknight Easy Watch", "url": "https://www.instagram.com/p/CctIJV-vNBL/", "note": "", "subgenre": "Heist/Thriller", "watched": false, "type": "movie", "id": "m58"}, {"title": "Yes Man", "year": "2008", "genre": "Comedy", "language": "English", "time": "Weeknight Easy Watch", "url": "https://www.instagram.com/p/CbkeQAPviKA/", "note": "", "subgenre": "Comedy", "watched": false, "type": "movie", "id": "m59"}, {"title": "Titanic", "year": "1997", "genre": "Romance", "language": "English", "time": "Date Night", "url": "https://www.instagram.com/reel/CaMnGq3omRk/", "note": "", "subgenre": "Romance/Drama", "watched": false, "type": "movie", "id": "m60"}, {"title": "Atonement", "year": "2007", "genre": "Romance", "language": "English", "time": "Rainy Day / Cozy", "url": "https://www.instagram.com/reel/CaMnGq3omRk/", "note": "", "subgenre": "Romance/Drama", "watched": false, "type": "movie", "id": "m61"}, {"title": "Blue Valentine", "year": "2010", "genre": "Romance", "language": "English", "time": "Late Night Solo", "url": "https://www.instagram.com/reel/CaMnGq3omRk/", "note": "", "subgenre": "Drama/Romance", "watched": false, "type": "movie", "id": "m62"}, {"title": "Seven Pounds", "year": "2008", "genre": "Drama", "language": "English", "time": "Late Night Solo", "url": "https://www.instagram.com/reel/CaMnGq3omRk/", "note": "", "subgenre": "Drama", "watched": false, "type": "movie", "id": "m63"}, {"title": "La La Land", "year": "2016", "genre": "Romance", "language": "English", "time": "Date Night", "url": "https://www.instagram.com/reel/CaMnGq3omRk/", "note": "", "subgenre": "Romance/Music", "watched": false, "type": "movie", "id": "m64"}, {"title": "The Invisible Guest", "year": "2016", "genre": "Thriller/Mystery", "language": "Spanish", "time": "Late Night Solo", "url": "https://www.instagram.com/p/CaHk9ffv5RQ/", "note": "", "subgenre": "Thriller/Mystery", "watched": false, "type": "movie", "id": "m65"}, {"title": "The Stoneman Murders", "year": "2009", "genre": "Crime/Heist", "language": "Hindi", "time": "Late Night Solo", "url": "https://www.instagram.com/p/CaFhXE1PAtN/", "note": "", "subgenre": "Crime/Thriller", "watched": false, "type": "movie", "id": "m66"}, {"title": "The Master", "year": "2012", "genre": "Drama", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/CYzB5_8JKwb/", "note": "", "subgenre": "Drama", "watched": false, "type": "movie", "id": "m67"}, {"title": "Tenet", "year": "2020", "genre": "Sci-Fi", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/CYzB5_8JKwb/", "note": "", "subgenre": "Sci-Fi/Action", "watched": false, "type": "movie", "id": "m68"}, {"title": "Blade Runner 2049", "year": "2017", "genre": "Sci-Fi", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/p/CZWdh7dtW7w/", "note": "", "subgenre": "Sci-Fi", "watched": false, "type": "movie", "id": "m69"}, {"title": "Inception", "year": "2010", "genre": "Sci-Fi", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/p/CZWdh7dtW7w/", "note": "", "subgenre": "Sci-Fi/Thriller", "watched": false, "type": "movie", "id": "m70"}, {"title": "Interstellar", "year": "2014", "genre": "Sci-Fi", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/p/CZWdh7dtW7w/", "note": "", "subgenre": "Sci-Fi", "watched": false, "type": "movie", "id": "m71"}, {"title": "Forrest Gump", "year": "1994", "genre": "Drama", "language": "English", "time": "Rainy Day / Cozy", "url": "https://www.instagram.com/p/CZZNjcsPuU8/", "note": "", "subgenre": "Drama", "watched": false, "type": "movie", "id": "m72"}, {"title": "Jurassic Park", "year": "1993", "genre": "Action", "language": "English", "time": "Family / Group Watch", "url": "https://www.instagram.com/p/CZZNjcsPuU8/", "note": "", "subgenre": "Action/Adventure", "watched": false, "type": "movie", "id": "m73"}, {"title": "The Shawshank Redemption", "year": "1994", "genre": "Drama", "language": "English", "time": "Rainy Day / Cozy", "url": "https://www.instagram.com/p/CZZNjcsPuU8/", "note": "", "subgenre": "Drama", "watched": false, "type": "movie", "id": "m74"}, {"title": "Pulp Fiction", "year": "1994", "genre": "Crime/Heist", "language": "English", "time": "Late Night Solo", "url": "https://www.instagram.com/p/CZZNjcsPuU8/", "note": "", "subgenre": "Crime", "watched": false, "type": "movie", "id": "m75"}, {"title": "Source Code", "year": "2011", "genre": "Sci-Fi", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/CZhPaPDJ_Us/", "note": "", "subgenre": "Sci-Fi/Thriller", "watched": false, "type": "movie", "id": "m76"}, {"title": "Before I Fall", "year": "2017", "genre": "Sci-Fi", "language": "English", "time": "Weeknight Easy Watch", "url": "https://www.instagram.com/reel/CZhPaPDJ_Us/", "note": "", "subgenre": "Drama/Sci-Fi", "watched": false, "type": "movie", "id": "m77"}, {"title": "Time Trap", "year": "2017", "genre": "Sci-Fi", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/CZhPaPDJ_Us/", "note": "", "subgenre": "Sci-Fi", "watched": false, "type": "movie", "id": "m78"}, {"title": "Deja Vu", "year": "2006", "genre": "Sci-Fi", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/CZhPaPDJ_Us/", "note": "", "subgenre": "Sci-Fi/Thriller", "watched": false, "type": "movie", "id": "m79"}, {"title": "Edge of Tomorrow", "year": "2014", "genre": "Sci-Fi", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/CZhPaPDJ_Us/", "note": "", "subgenre": "Sci-Fi/Action", "watched": false, "type": "movie", "id": "m80"}, {"title": "Palm Springs", "year": "2020", "genre": "Sci-Fi", "language": "English", "time": "Weeknight Easy Watch", "url": "https://www.instagram.com/reel/CZhPaPDJ_Us/", "note": "", "subgenre": "Comedy/Sci-Fi", "watched": false, "type": "movie", "id": "m81"}, {"title": "The Spectacular Now", "year": "2013", "genre": "Romance", "language": "English", "time": "Rainy Day / Cozy", "url": "https://www.instagram.com/reel/CWaZBASouVv/", "note": "", "subgenre": "Drama/Romance", "watched": false, "type": "movie", "id": "m82"}, {"title": "The Perks of Being a Wallflower", "year": "2012", "genre": "Drama", "language": "English", "time": "Rainy Day / Cozy", "url": "https://www.instagram.com/reel/CWaZBASouVv/", "note": "", "subgenre": "Drama", "watched": false, "type": "movie", "id": "m83"}, {"title": "The Kings of Summer", "year": "2013", "genre": "Comedy", "language": "English", "time": "Weeknight Easy Watch", "url": "https://www.instagram.com/reel/CWaZBASouVv/", "note": "", "subgenre": "Comedy/Drama", "watched": false, "type": "movie", "id": "m84"}, {"title": "Legally Blonde", "year": "2001", "genre": "Comedy", "language": "English", "time": "Weeknight Easy Watch", "url": "https://www.instagram.com/reel/CSth1dRoRkm/", "note": "", "subgenre": "Comedy", "watched": false, "type": "movie", "id": "m85"}, {"title": "Midnight in Paris", "year": "2011", "genre": "Romance", "language": "English", "time": "Date Night", "url": "https://www.instagram.com/reel/CSd7-AKobtK/", "note": "", "subgenre": "Romance/Comedy", "watched": false, "type": "movie", "id": "m86"}, {"title": "Moonlight", "year": "2016", "genre": "Drama", "language": "English", "time": "Late Night Solo", "url": "https://www.instagram.com/reel/CSd7-AKobtK/", "note": "", "subgenre": "Drama", "watched": false, "type": "movie", "id": "m87"}, {"title": "The Theory of Everything", "year": "2014", "genre": "Romance", "language": "English", "time": "Rainy Day / Cozy", "url": "https://www.instagram.com/reel/CSd7-AKobtK/", "note": "", "subgenre": "Drama/Romance", "watched": false, "type": "movie", "id": "m88"}, {"title": "Columbus", "year": "2017", "genre": "Romance", "language": "English", "time": "Rainy Day / Cozy", "url": "https://www.instagram.com/reel/CSd7-AKobtK/", "note": "", "subgenre": "Drama/Romance", "watched": false, "type": "movie", "id": "m89"}, {"title": "13 Going on 30", "year": "2004", "genre": "Romance", "language": "English", "time": "Weeknight Easy Watch", "url": "https://www.instagram.com/reel/CRYoAAfhRMK/", "note": "", "subgenre": "Comedy/Romance", "watched": false, "type": "movie", "id": "m90"}, {"title": "Good Will Hunting", "year": "1997", "genre": "Drama", "language": "English", "time": "Rainy Day / Cozy", "url": "https://www.instagram.com/reel/CRYoAAfhRMK/", "note": "", "subgenre": "Drama", "watched": false, "type": "movie", "id": "m91"}, {"title": "Crazy Rich Asians", "year": "2018", "genre": "Romance", "language": "English", "time": "Date Night", "url": "https://www.instagram.com/reel/CRYoAAfhRMK/", "note": "", "subgenre": "Romance/Comedy", "watched": false, "type": "movie", "id": "m92"}, {"title": "Hidden Figures", "year": "2016", "genre": "Drama", "language": "English", "time": "Family / Group Watch", "url": "https://www.instagram.com/reel/CPc7ctqBC4i/", "note": "", "subgenre": "Drama", "watched": false, "type": "movie", "id": "m93"}, {"title": "Whiplash", "year": "2014", "genre": "Drama", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/CPc7ctqBC4i/", "note": "", "subgenre": "Drama/Music", "watched": false, "type": "movie", "id": "m94"}, {"title": "The Martian", "year": "2015", "genre": "Sci-Fi", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/CPD_JTWDU1K/", "note": "", "subgenre": "Sci-Fi", "watched": false, "type": "movie", "id": "m95"}, {"title": "Gravity", "year": "2013", "genre": "Sci-Fi", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/CPD_JTWDU1K/", "note": "", "subgenre": "Sci-Fi/Thriller", "watched": false, "type": "movie", "id": "m96"}, {"title": "2001: A Space Odyssey", "year": "1968", "genre": "Sci-Fi", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/CPD_JTWDU1K/", "note": "", "subgenre": "Sci-Fi", "watched": false, "type": "movie", "id": "m97"}, {"title": "Ad Astra", "year": "2019", "genre": "Sci-Fi", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/CPD_JTWDU1K/", "note": "", "subgenre": "Sci-Fi/Drama", "watched": false, "type": "movie", "id": "m98"}, {"title": "First Man", "year": "2018", "genre": "Drama", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/CPD_JTWDU1K/", "note": "", "subgenre": "Drama", "watched": false, "type": "movie", "id": "m99"}, {"title": "Passengers", "year": "2016", "genre": "Sci-Fi", "language": "English", "time": "Date Night", "url": "https://www.instagram.com/reel/CPD_JTWDU1K/", "note": "", "subgenre": "Sci-Fi/Romance", "watched": false, "type": "movie", "id": "m100"}, {"title": "The Pursuit of Happyness", "year": "2006", "genre": "Drama", "language": "English", "time": "Family / Group Watch", "url": "https://www.instagram.com/reel/CPI4wUDDVV9/", "note": "", "subgenre": "Drama", "watched": false, "type": "movie", "id": "m101"}, {"title": "Zodiac", "year": "2007", "genre": "Thriller/Mystery", "language": "English", "time": "Late Night Solo", "url": "https://www.instagram.com/reel/CObDl1MBQDz/", "note": "", "subgenre": "Thriller/Mystery", "watched": false, "type": "movie", "id": "m102"}, {"title": "Predestination", "year": "2014", "genre": "Sci-Fi", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/COvrqoABmUE/", "note": "", "subgenre": "Sci-Fi", "watched": false, "type": "movie", "id": "m103"}, {"title": "Looper", "year": "2012", "genre": "Sci-Fi", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/COvrqoABmUE/", "note": "", "subgenre": "Sci-Fi/Action", "watched": false, "type": "movie", "id": "m104"}, {"title": "May the Devil Take You Too", "year": "2020", "genre": "Horror", "language": "Indonesian", "time": "Late Night Solo", "url": "https://www.instagram.com/p/DbVkpNtjWf2/", "note": "", "subgenre": "Horror", "watched": false, "type": "movie", "id": "m105"}, {"title": "The Corpse Washer", "year": "2023", "genre": "Horror", "language": "Indonesian", "time": "Late Night Solo", "url": "https://www.instagram.com/p/DbVkpNtjWf2/", "note": "", "subgenre": "Horror", "watched": false, "type": "movie", "id": "m106"}, {"title": "Sewu Dino", "year": "2023", "genre": "Horror", "language": "Indonesian", "time": "Late Night Solo", "url": "https://www.instagram.com/p/DbVkpNtjWf2/", "note": "", "subgenre": "Horror", "watched": false, "type": "movie", "id": "m107"}, {"title": "Pengantin Setan", "year": "2020", "genre": "Horror", "language": "Indonesian", "time": "Late Night Solo", "url": "https://www.instagram.com/p/DbVkpNtjWf2/", "note": "", "subgenre": "Horror", "watched": false, "type": "movie", "id": "m108"}, {"title": "Lembayung", "year": "2019", "genre": "Horror", "language": "Indonesian", "time": "Late Night Solo", "url": "https://www.instagram.com/p/DbVkpNtjWf2/", "note": "", "subgenre": "Horror", "watched": false, "type": "movie", "id": "m109"}, {"title": "A Man Called Otto", "year": "2022", "genre": "Comedy", "language": "English", "time": "Family / Group Watch", "url": "https://www.instagram.com/reel/DaAaQFDoyrV/", "note": "", "subgenre": "Comedy/Drama", "watched": false, "type": "movie", "id": "m110"}, {"title": "Crime 101", "year": "2025", "genre": "Crime/Heist", "language": "English", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/p/DU0WiQGjBSD/", "note": "", "subgenre": "Heist/Thriller", "watched": false, "type": "movie", "id": "m111"}, {"title": "Dhurandhar", "year": "2025", "genre": "Action/Crime", "language": "Hindi", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/DW82uHhDJIJ/", "note": "", "subgenre": "Action/Crime", "watched": false, "type": "movie", "id": "m112"}, {"title": "Dhurandhar 2", "year": "2026", "genre": "Action/Crime", "language": "Hindi", "time": "Weekend Deep Dive", "url": "https://www.instagram.com/reel/DWa-wjljIt3/", "note": "upcoming, may not be released yet", "subgenre": "Action/Crime", "watched": false, "type": "movie", "id": "m113"}], "series": [{"title": "A Summer Story / A Winter Story / A Monsoon Story", "genre": "Drama", "language": "Hindi/English", "url": "https://www.instagram.com/reel/C-XVDORP7JT/", "note": "YouTube series trilogy", "subgenre": "Drama", "time": "", "watched": false, "type": "series", "id": "s0"}, {"title": "Badtameez Dil", "genre": "Romance", "language": "Hindi", "url": "https://www.instagram.com/reel/CwUCvNKI-tD/", "note": "", "subgenre": "Romance", "time": "", "watched": false, "type": "series", "id": "s1"}, {"title": "Gutar Gu", "genre": "Romance/Comedy", "language": "Hindi", "url": "https://www.instagram.com/reel/CwUCvNKI-tD/", "note": "", "subgenre": "Romance/Comedy", "time": "", "watched": false, "type": "series", "id": "s2"}, {"title": "Little Things", "genre": "Romance", "language": "Hindi", "url": "https://www.instagram.com/reel/CwUCvNKI-tD/", "note": "", "subgenre": "Romance", "time": "", "watched": false, "type": "series", "id": "s3"}, {"title": "Highway Love", "genre": "Romance", "language": "Hindi", "url": "https://www.instagram.com/reel/CwUCvNKI-tD/", "note": "", "subgenre": "Romance", "time": "", "watched": false, "type": "series", "id": "s4"}, {"title": "Mismatched", "genre": "Romance/Drama", "language": "Hindi", "url": "https://www.instagram.com/reel/CwUCvNKI-tD/", "note": "", "subgenre": "Romance/Drama", "time": "", "watched": false, "type": "series", "id": "s5"}, {"title": "Bandish Bandits", "genre": "Drama/Music", "language": "Hindi", "url": "https://www.instagram.com/reel/CwUCvNKI-tD/", "note": "", "subgenre": "Drama/Music", "time": "", "watched": false, "type": "series", "id": "s6"}, {"title": "Broken But Beautiful", "genre": "Romance/Drama", "language": "Hindi", "url": "https://www.instagram.com/reel/CwUCvNKI-tD/", "note": "", "subgenre": "Romance/Drama", "time": "", "watched": false, "type": "series", "id": "s7"}, {"title": "Flames", "genre": "Romance", "language": "Hindi", "url": "https://www.instagram.com/reel/CwUCvNKI-tD/", "note": "", "subgenre": "Romance", "time": "", "watched": false, "type": "series", "id": "s8"}, {"title": "The Leftovers", "genre": "Drama", "language": "English", "url": "https://www.instagram.com/p/Cck9sWZvgQ8/", "note": "", "subgenre": "Drama", "time": "", "watched": false, "type": "series", "id": "s9"}, {"title": "Succession", "genre": "Drama", "language": "English", "url": "https://www.instagram.com/p/CbSi_j9vxzw/", "note": "", "subgenre": "Drama", "time": "", "watched": false, "type": "series", "id": "s10"}, {"title": "The Vampire Diaries", "genre": "Drama/Fantasy", "language": "English", "url": "https://www.instagram.com/reel/COj7qfznXaS/", "note": "", "subgenre": "Drama/Fantasy", "time": "", "watched": false, "type": "series", "id": "s11"}, {"title": "Devkhel", "genre": "Thriller/Mystery", "language": "Marathi", "url": "https://www.instagram.com/reel/DUOA_bRjBsL/", "note": "on ZEE5, folklore/crime thriller", "subgenre": "Thriller/Mystery", "time": "", "watched": false, "type": "series", "id": "s12"}], "unidentified": [{"url": "https://www.instagram.com/reel/DRNh6hiklZb/", "note": "Horror short films compilation, no titles named", "resolved": false, "id": "u0"}, {"url": "https://www.instagram.com/reel/DRUX8Jgiu3m/", "note": "Psychological thriller plot described (girl trapped in isolated house) but no title given", "resolved": false, "id": "u1"}, {"url": "https://www.instagram.com/reel/DRNHBIQEivt/", "note": "Gujarati horror-comedy described (Navratri/witch curse) but title not stated", "resolved": false, "id": "u2"}, {"url": "https://www.instagram.com/reel/DItSMxMP3e6/", "note": "Bengali romantic-suspense movie, no title", "resolved": false, "id": "u3"}, {"url": "https://www.instagram.com/reel/DL-CYPgyups/", "note": "Caption is just an emoji, no info", "resolved": false, "id": "u4"}, {"url": "https://www.instagram.com/reel/DGgLDlwTWab/", "note": "Generic 'TV shows you'll never regret' post, no titles", "resolved": false, "id": "u5"}, {"url": "https://www.instagram.com/reel/C0T20bECMZd/", "note": "Asks about weird films, no title given", "resolved": false, "id": "u6"}, {"url": "https://www.instagram.com/reel/DCodTR5NuFj/", "note": "Romantic drama reaction video, no title", "resolved": false, "id": "u7"}, {"url": "https://www.instagram.com/reel/DCMzZAmhfKq/", "note": "Caption only says 'share with someone', hashtag #dasoham unclear", "resolved": false, "id": "u8"}, {"url": "https://www.instagram.com/reel/DBqfuJpSVJs/", "note": "References a rom-com era generally, no specific title", "resolved": false, "id": "u9"}, {"url": "https://www.instagram.com/reel/C_pfVA6JDKf/", "note": "Caption garbled/mismatched (talks about Tesla Cybertruck, not TV shows)", "resolved": false, "id": "u10"}, {"url": "https://www.instagram.com/reel/C03Xo9Iil2n/", "note": "Asks 'did you watch these', no titles listed in caption", "resolved": false, "id": "u11"}, {"url": "https://www.instagram.com/reel/C0YcAYzvP3_/", "note": "General 'best of the year' cinema post, no titles", "resolved": false, "id": "u12"}, {"url": "https://www.instagram.com/reel/CzuRqlhP34A/", "note": "Generic horror content, no title", "resolved": false, "id": "u13"}, {"url": "https://www.instagram.com/reel/Cw-jWsuMD6P/", "note": "Asks for rom-com suggestions, no title", "resolved": false, "id": "u14"}, {"url": "https://www.instagram.com/reel/CvmsmDYNNvE/", "note": "Asks if you could finish 'these', no titles named", "resolved": false, "id": "u15"}, {"url": "https://www.instagram.com/reel/Crkl9xDoDC0/", "note": "Outdoor cinema screening event promo, not a specific film", "resolved": false, "id": "u16"}, {"url": "https://www.instagram.com/reel/CtWV7K6Nzp0/", "note": "Asks what scares you, no title", "resolved": false, "id": "u17"}, {"url": "https://www.instagram.com/reel/CnwIGaItoGp/", "note": "South movie dubbed in Hindi, suspense genre, no title", "resolved": false, "id": "u18"}, {"url": "https://www.instagram.com/reel/CncMiXAJ7Zu/", "note": "Generic 'follow for more', no content", "resolved": false, "id": "u19"}, {"url": "https://www.instagram.com/reel/Co496xBjsYY/", "note": "'Must watch trilogy' — no titles named", "resolved": false, "id": "u20"}, {"url": "https://www.instagram.com/reel/CoHrxqDgxBV/", "note": "Suspense/thriller movie described, no title", "resolved": false, "id": "u21"}, {"url": "https://www.instagram.com/reel/DRmsYeWE9gi/", "note": "'3 Indian movies made me cry' — titles not named in caption", "resolved": false, "id": "u22"}, {"url": "https://www.instagram.com/p/DS2q90ODGAD/", "note": "Generic 'save this' caption, no info", "resolved": false, "id": "u23"}, {"url": "https://www.instagram.com/reel/CmjI0tvPsBV/", "note": "Asks for film suggestions, no title given", "resolved": false, "id": "u24"}, {"url": "https://www.instagram.com/reel/CkT1tBdvMcg/", "note": "True-crime movie on Amazon Prime described, no title", "resolved": false, "id": "u25"}, {"url": "https://www.instagram.com/reel/CkxVn7qPpla/", "note": "Generic family show recommendations post, no titles", "resolved": false, "id": "u26"}, {"url": "https://www.instagram.com/reel/CgqZKT6Fwgu/", "note": "Generic 'most shocking movie' horror post, no title", "resolved": false, "id": "u27"}, {"url": "https://www.instagram.com/p/CgH4I8NNcOa/", "note": "Asks which movies motivated you, no titles", "resolved": false, "id": "u28"}, {"url": "https://www.instagram.com/reel/Cdar45vOFJY/", "note": "Generic romantic films post, no titles", "resolved": false, "id": "u29"}, {"url": "https://www.instagram.com/p/CQAXKGTlf_I/", "note": "Generic 'save for laughs' post, no titles", "resolved": false, "id": "u30"}, {"url": "https://www.instagram.com/p/CamRp-RPmjy/", "note": "Asks 'which one', no titles named", "resolved": false, "id": "u31"}, {"url": "https://www.instagram.com/reel/CZ8STYIA5AG/", "note": "'Car movies' post — hashtags are car brands, not film titles", "resolved": false, "id": "u32"}, {"url": "https://www.instagram.com/p/CQlC3lzn8sv/", "note": "Generic 'make your list' post, no titles", "resolved": false, "id": "u33"}, {"url": "https://www.instagram.com/p/CRDdjhIhgmF/", "note": "'Space Movies' — no titles listed", "resolved": false, "id": "u34"}, {"url": "https://www.instagram.com/p/CQ_r0CLBbH6/", "note": "Generic 'your favorite' post, no titles", "resolved": false, "id": "u35"}, {"url": "https://www.instagram.com/reel/CQLN6bVh12l/", "note": "'Which one did I forget' — spy movies theme, hashtag has an actor name but no clear title", "resolved": false, "id": "u36"}, {"url": "https://www.instagram.com/reel/CQBFGY6HRGc/", "note": "Part 2 continuation post, no title in this caption", "resolved": false, "id": "u37"}, {"url": "https://www.instagram.com/p/CfGXo1aKRaw/", "note": "Empty caption", "resolved": false, "id": "u38"}, {"url": "https://www.instagram.com/p/DZ7HIc7GT08/", "note": "'Favourite short films' — no titles given", "resolved": false, "id": "u39"}, {"url": "https://www.instagram.com/p/DbY7DgFDaBT/", "note": "About the MCU/Avengers franchise broadly — not a single title", "resolved": false, "id": "u40"}, {"url": "https://www.instagram.com/p/DZkQZr-EWO-/", "note": "'If you like GoT watch this' — the actual recommended series is never named", "resolved": false, "id": "u41"}, {"url": "https://www.instagram.com/reel/DXV7P-BgQS_/", "note": "'Sexy movies' list — no titles given (only trivia about Pan's Labyrinth's director)", "resolved": false, "id": "u42"}, {"url": "https://www.instagram.com/reel/DXGWqEmjItq/", "note": "Paranormal series described in detail — but the show's name is never stated", "resolved": false, "id": "u43"}, {"url": "https://www.instagram.com/p/DWbZ1MzDbiu/", "note": "Caption is just 'brain-fogged, but locked in', no info", "resolved": false, "id": "u44"}, {"url": "https://www.instagram.com/reel/DWRtOAuDROh/", "note": "'Dark web' survival horror described, no title", "resolved": false, "id": "u45"}, {"url": "https://www.instagram.com/p/CR-6ZittQcg/", "note": "Generic 'which one is your favourite', no titles", "resolved": false, "id": "u46"}, {"url": "https://www.instagram.com/p/CRlY-OQhHUi/", "note": "'Unpredictable twists' generic post, no titles", "resolved": false, "id": "u47"}, {"url": "https://www.instagram.com/p/CUPmxvCNuRD/", "note": "Generic 'any such series' post, no titles", "resolved": false, "id": "u48"}, {"url": "https://www.instagram.com/reel/CV7retYMd3E/", "note": "'Underrated movies on Amazon Prime' — no specific titles", "resolved": false, "id": "u49"}]};
+const OMDB_KEY = 'fbc474e6';
+
+let DATA = null;
+let activeTab = 'movies';
+let query = '';
+let hideWatched = false;
+let openResolveId = null;
+
+let db = null;
+let docRef = null;
+
+let auth = null;
+let isAdmin = false;
+
+async function initFirebase(){
+  const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+  const { getFirestore, doc, getDoc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+  const { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
+  const firebaseConfig = {
+    apiKey: "AIzaSyCENX28G1ilQiZiLwjCY3AF7oPCelj9UsQ",
+    authDomain: "movie-collections-d9103.firebaseapp.com",
+    projectId: "movie-collections-d9103",
+    storageBucket: "movie-collections-d9103.firebasestorage.app",
+    messagingSenderId: "415085699584",
+    appId: "1:415085699584:web:c98f6eb2fd3ea061c7eee5",
+    measurementId: "G-Y0FS0S4XT3"
+  };
+  const app = initializeApp(firebaseConfig);
+  db = getFirestore(app);
+  docRef = doc(db, "vault", "main");
+  auth = getAuth(app);
+  window._fs = { getDoc, setDoc, doc };
+  window._auth = { signInWithEmailAndPassword, signOut, onAuthStateChanged };
+  onAuthStateChanged(auth, (user)=>{
+    isAdmin = !!user;
+    updateAdminUI();
+    render();
+  });
+}
+
+async function adminLogin(){
+  const email = document.getElementById('adminEmail').value.trim();
+  const pass = document.getElementById('adminPass').value;
+  const statusEl = document.getElementById('loginStatus');
+  statusEl.textContent = 'Signing in...'; statusEl.style.color = 'var(--text-dim)';
+  try{
+    await window._auth.signInWithEmailAndPassword(auth, email, pass);
+    statusEl.textContent = '';
+    document.getElementById('loginBox').style.display = 'none';
+  }catch(e){
+    statusEl.textContent = 'Login failed — check email/password';
+    statusEl.style.color = 'var(--marquee-red)';
+  }
+}
+
+async function adminLogout(){
+  await window._auth.signOut(auth);
+}
+
+function updateAdminUI(){
+  const badge = document.getElementById('adminBadge');
+  if(badge) badge.style.display = isAdmin ? 'inline-block' : 'none';
+}
+
+async function loadData(){
+  const main = document.getElementById('main');
+  try{
+    await initFirebase();
+    const snap = await window._fs.getDoc(docRef);
+    if(snap.exists()){
+      DATA = snap.data();
+    } else {
+      DATA = JSON.parse(JSON.stringify(SEED));
+      await save();
+    }
+  }catch(e){
+    console.error('Firebase load failed, falling back to local seed (no sync)', e);
+    DATA = JSON.parse(JSON.stringify(SEED));
+    main.innerHTML = '<div class="section-note" style="color:var(--marquee-red)">Could not connect to Firebase — showing local data only, changes won\'t sync. Check your internet connection or Firestore setup, then refresh.</div>' + main.innerHTML;
+  }
+  render();
+}
+
+async function save(){
+  try{
+    await window._fs.setDoc(docRef, DATA);
+  }catch(e){
+    console.error('save failed', e);
+  }
+}
+
+function uid(prefix){ return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+function allGenres(){
+  const g = new Set();
+  DATA.movies.forEach(m=>g.add(m.genre));
+  DATA.series.forEach(s=>g.add(s.genre));
+  return [...g].filter(Boolean).sort();
+}
+function allTimes(){
+  const t = new Set();
+  DATA.movies.forEach(m=>{ if(m.time) t.add(m.time); });
+  return [...t].filter(Boolean).sort();
+}
+function allLanguages(){
+  const l = new Set();
+  DATA.movies.forEach(m=>l.add(m.language));
+  DATA.series.forEach(s=>l.add(s.language));
+  return [...l].filter(Boolean).sort();
+}
+
+function matchesQuery(obj, fields){
+  if(!query) return true;
+  const q = query.toLowerCase();
+  return fields.some(f => (obj[f]||'').toLowerCase().includes(q));
+}
+
+function renderStats(){
+  document.getElementById('statMovies').textContent = DATA.movies.length;
+  document.getElementById('statSeries').textContent = DATA.series.length;
+  document.getElementById('statUnid').textContent = DATA.unidentified.filter(u=>!u.resolved).length;
+  document.getElementById('statWatched').textContent = DATA.movies.filter(m=>m.watched).length + DATA.series.filter(s=>s.watched).length;
+}
+
+function renderTabs(){
+  const tabs = [
+    {id:'movies', label:'Movies by Genre'},
+    {id:'series', label:'Series'},
+  ];
+  if(isAdmin){
+    tabs.push({id:'unidentified', label:'Needs Review ('+DATA.unidentified.filter(u=>!u.resolved).length+')'});
+  }
+  if(activeTab==='unidentified' && !isAdmin) activeTab='movies';
+  const el = document.getElementById('tabs');
+  el.innerHTML = tabs.map(t => `<button class="tab-btn ${t.id===activeTab?'active':''}" data-tab="${t.id}">${t.label}</button>`).join('');
+  el.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ activeTab = btn.dataset.tab; openResolveId=null; render(); });
+  });
+}
+
+function toggleWatched(type, id){
+  if(!isAdmin){ alert('Sign in as admin to make changes.'); return; }
+  const arr = type==='movie' ? DATA.movies : DATA.series;
+  const item = arr.find(x=>x.id===id);
+  if(item){ item.watched = !item.watched; save(); renderStats(); render(); }
+}
+
+function movieCard(m, type){
+  const watchedClass = m.watched ? 'watched' : '';
+  const watchControl = isAdmin
+    ? `<button class="watch-btn ${m.watched?'on':''}" onclick="toggleWatched('${type}','${m.id}')">${m.watched?'✓ Watched':'Mark watched'}</button>`
+    : (m.watched ? `<span class="watch-btn on" style="cursor:default;">✓ Watched</span>` : '');
+  return `<div class="card ${watchedClass}">
+      <div class="card-title"><a href="${m.url}" target="_blank" rel="noopener">${m.title}</a></div>
+      <div class="card-year">${m.year? m.year+' &middot; ':''}${m.subgenre||''}</div>
+      ${m.note ? `<div class="card-note">${m.note}</div>` : ''}
+      <div class="card-foot">
+        <a class="card-link" href="${m.url}" target="_blank" rel="noopener">View post &rarr;</a>
+        ${watchControl}
+      </div>
+    </div>`;
+}
+
+function renderMovies(){
+  const main = document.getElementById('main');
+  let filtered = DATA.movies.filter(m => matchesQuery(m, ['title','genre','language','subgenre','time']));
+  if(hideWatched) filtered = filtered.filter(m=>!m.watched);
+  if(filtered.length===0){ main.innerHTML = '<div class="empty-msg">No matches.</div>'; return; }
+
+  const genres = [...new Set(filtered.map(m=>m.genre))].sort();
+  let html = '';
+  genres.forEach(genre=>{
+    const genreMovies = filtered.filter(m=>m.genre===genre);
+    html += `<div class="genre-section"><div class="genre-title">${genre} <span class="count">${genreMovies.length} titles</span></div>`;
+    const times = [...new Set(genreMovies.map(m=>m.time||'Unspecified'))].sort();
+    times.forEach(time=>{
+      const timeMovies = genreMovies.filter(m=>(m.time||'Unspecified')===time);
+      html += `<div class="time-block"><div class="time-title">${time}</div>`;
+      const langs = [...new Set(timeMovies.map(m=>m.language))].sort();
+      langs.forEach(lang=>{
+        const langMovies = timeMovies.filter(m=>m.language===lang);
+        html += `<div class="lang-group"><div class="lang-title">${lang}</div><div class="card-grid">`;
+        langMovies.forEach(m=>{ html += movieCard(m,'movie'); });
+        html += `</div></div>`;
+      });
+      html += `</div>`;
+    });
+    html += `</div>`;
+  });
+  main.innerHTML = html;
+}
+
+function renderSeries(){
+  const main = document.getElementById('main');
+  let filtered = DATA.series.filter(s => matchesQuery(s, ['title','genre','language','subgenre']));
+  if(hideWatched) filtered = filtered.filter(s=>!s.watched);
+  let html = `<div class="section-note"><b>Note:</b> TV/web series are kept separate from movies — same watched-tracking applies.</div>`;
+  if(filtered.length===0){ html += '<div class="empty-msg">No matches.</div>'; main.innerHTML = html; return; }
+  const genres = [...new Set(filtered.map(s=>s.genre))].sort();
+  genres.forEach(genre=>{
+    const genreSeries = filtered.filter(s=>s.genre===genre);
+    html += `<div class="genre-section"><div class="genre-title">${genre} <span class="count">${genreSeries.length}</span></div>`;
+    const langs = [...new Set(genreSeries.map(s=>s.language))].sort();
+    langs.forEach(lang=>{
+      const langSeries = genreSeries.filter(s=>s.language===lang);
+      html += `<div class="lang-group"><div class="lang-title">${lang}</div><div class="card-grid">`;
+      langSeries.forEach(s=>{ html += movieCard(s,'series'); });
+      html += `</div></div>`;
+    });
+    html += `</div>`;
+  });
+  main.innerHTML = html;
+}
+
+function datalistOptions(id, values){
+  return `<datalist id="${id}">${values.map(v=>`<option value="${v}">`).join('')}</datalist>`;
+}
+
+function entryRowHtml(idx){
+  return `<div class="entry-row" data-idx="${idx}">
+    <div>
+      <div class="field-label">Title</div>
+      <div style="display:flex;gap:4px;">
+        <input type="text" class="f-title" placeholder="Movie / show name" style="flex:1;">
+        <button type="button" class="lookup-btn" onclick="lookupOMDb(this)" title="Auto-fill year/genre/language from OMDb">&#8635;</button>
+      </div>
+      <div class="lookup-status"></div>
+    </div>
+    <div><div class="field-label">Year</div><input type="text" class="f-year" placeholder="2024"></div>
+    <div><div class="field-label">Genre</div><input type="text" class="f-genre" list="genreOptions" placeholder="e.g. Drama or new..."></div>
+    <div><div class="field-label">Language</div><input type="text" class="f-lang" list="langOptions" placeholder="e.g. Hindi or new..."></div>
+    <div><div class="field-label">Best Time <span style="opacity:.6">(movie only)</span></div><input type="text" class="f-time" list="timeOptions" placeholder="e.g. Late Night or new..."></div>
+  </div>`;
+}
+
+async function lookupOMDb(btn){
+  const row = btn.closest('.entry-row');
+  const titleInput = row.querySelector('.f-title');
+  const statusEl = row.querySelector('.lookup-status');
+  const title = titleInput.value.trim();
+  if(!title){ statusEl.textContent = 'Type a title first'; statusEl.style.color = 'var(--marquee-red)'; return; }
+  statusEl.textContent = 'Looking up…'; statusEl.style.color = 'var(--text-dim)';
+  btn.disabled = true;
+  try{
+    const url = `https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=${OMDB_KEY}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if(data.Response === 'False'){
+      statusEl.textContent = 'Not found — enter details manually';
+      statusEl.style.color = 'var(--marquee-red)';
+    } else {
+      row.querySelector('.f-year').value = (data.Year||'').split(/[–-]/)[0];
+      const genre = (data.Genre||'').split(',')[0].trim();
+      if(genre) row.querySelector('.f-genre').value = genre;
+      const langMap = {'English':'English','Hindi':'Hindi','Tamil':'Tamil','Telugu':'Telugu','Korean':'Korean',
+        'Spanish':'Spanish','French':'French','Marathi':'Marathi','Malayalam':'Malayalam','Indonesian':'Indonesian',
+        'Japanese':'Japanese','Italian':'Italian'};
+      const lang = (data.Language||'').split(',')[0].trim();
+      row.querySelector('.f-lang').value = langMap[lang] || lang || '';
+      if(data.Type === 'series'){
+        const seriesRadio = row.closest('.resolve-form').querySelector('input[value="series"]');
+        if(seriesRadio) seriesRadio.checked = true;
+      }
+      titleInput.value = data.Title;
+      statusEl.textContent = `Found: ${data.Title} (${data.Year}) — ${data.Genre||''}`;
+      statusEl.style.color = 'var(--green)';
+    }
+  }catch(e){
+    statusEl.textContent = 'Lookup failed (network blocked?) — fill manually';
+    statusEl.style.color = 'var(--marquee-red)';
+    console.error(e);
+  }
+  btn.disabled = false;
+}
+
+function renderUnidentified(){
+  const main = document.getElementById('main');
+  const filtered = DATA.unidentified.filter(u=>!u.resolved).filter(u => matchesQuery(u, ['note']));
+  let html = `<div class="section-note"><b>${filtered.length} posts</b> still need review. Open a post, find the title, then hit "I found it" to add it (or add several, if the post lists more than one) into the vault above.</div>`;
+  html += datalistOptions('genreOptions', allGenres());
+  html += datalistOptions('langOptions', allLanguages());
+  html += datalistOptions('timeOptions', allTimes());
+  html += `<div class="unid-list">`;
+  filtered.forEach(u=>{
+    const isOpen = openResolveId===u.id;
+    html += `<div class="unid-item" id="item-${u.id}">
+      <div class="unid-top">
+        <span class="unid-note">${u.note}</span>
+        <a href="${u.url}" target="_blank" rel="noopener">Open post &rarr;</a>
+      </div>
+      <button class="resolve-btn" onclick="openResolve('${u.id}')">${isOpen?'Cancel':'I found it — add title(s)'}</button>
+      <div class="resolve-form ${isOpen?'open':''}" id="form-${u.id}">
+        <div class="type-toggle">
+          <label><input type="radio" name="type-${u.id}" value="movie" checked> Movie</label>
+          <label><input type="radio" name="type-${u.id}" value="series"> Series</label>
+        </div>
+        <div id="rows-${u.id}">${entryRowHtml(0)}</div>
+        <button class="add-row-btn" onclick="addRow('${u.id}')">+ Add another title from this post</button>
+        <div class="form-actions">
+          <button class="btn-primary" onclick="submitResolve('${u.id}')">Save to Vault</button>
+          <button class="btn-secondary" onclick="openResolveId=null; render();">Cancel</button>
+        </div>
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+  main.innerHTML = html;
+}
+
+function openResolve(id){
+  openResolveId = (openResolveId===id) ? null : id;
+  render();
+}
+
+function addRow(id){
+  const container = document.getElementById('rows-'+id);
+  const idx = container.children.length;
+  const div = document.createElement('div');
+  div.innerHTML = entryRowHtml(idx);
+  container.appendChild(div.firstElementChild);
+}
+
+function submitResolve(id){
+  if(!isAdmin){ alert('Sign in as admin to make changes.'); return; }
+  const item = DATA.unidentified.find(u=>u.id===id);
+  if(!item) return;
+  const typeEl = document.querySelector(`input[name="type-${id}"]:checked`);
+  const type = typeEl ? typeEl.value : 'movie';
+  const rows = document.querySelectorAll(`#rows-${id} .entry-row`);
+  let added = 0;
+  rows.forEach(row=>{
+    const title = row.querySelector('.f-title').value.trim();
+    if(!title) return;
+    const year = row.querySelector('.f-year').value.trim();
+    const genre = row.querySelector('.f-genre').value.trim() || 'Uncategorized';
+    const language = row.querySelector('.f-lang').value.trim() || 'Unknown';
+    const time = row.querySelector('.f-time').value.trim();
+    const entry = {
+      id: uid(type==='movie'?'m':'s'),
+      title, year, genre, subgenre:'', language,
+      time: type==='movie' ? time : '',
+      url: item.url, note:'', watched:false, type
+    };
+    if(type==='movie') DATA.movies.push(entry); else DATA.series.push(entry);
+    added++;
+  });
+  if(added>0){
+    item.resolved = true;
+    openResolveId = null;
+    save();
+    renderStats();
+    render();
+  } else {
+    alert('Enter at least one title before saving.');
+  }
+}
+
+function render(){
+  renderTabs();
+  renderStats();
+  if(activeTab==='movies') renderMovies();
+  else if(activeTab==='series') renderSeries();
+  else renderUnidentified();
+}
+
+document.getElementById('searchBox').addEventListener('input', (e)=>{ query = e.target.value; render(); });
+document.getElementById('hideWatched').addEventListener('change', (e)=>{ hideWatched = e.target.checked; render(); });
+
+loadData();
+</script>
+</body>
+</html>
