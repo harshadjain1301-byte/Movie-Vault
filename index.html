@@ -28,10 +28,10 @@ body{margin:0;background:var(--bg);
   z-index: 100;
 }
 .logo-container img {
-  width: 100%;
-  height: 100%;
+  width: 450%;
+  height: 250%;
   object-fit: contain;
-  border-radius: 8px;
+  border-radius: 20px;
 }
 
 .header{padding:40px 24px 24px;text-align:center;border-bottom:1px solid var(--line);position:relative;}
@@ -177,7 +177,7 @@ footer{text-align:center;padding:30px 20px 50px;color:var(--text-dim);font-size:
 
 <div class="logo-container">
   <!-- Replace this with a hosted image link if you want it visible to others -->
-  <img src="image_4d893c.jpg" alt="Logo">
+  <img src="https://fabulous-dolphin.staticdomains.app/6218bfc829c0772381d4ee6c296c531b.png" alt="Logo">
 </div>
 
 <div class="header">
@@ -450,7 +450,7 @@ function toggleWatched(type, id){
 function movieCard(m, type){
   const watchedClass = m.watched ? 'watched' : '';
   const watchControl = isAdmin
-    ? `<button class="watch-btn ${m.watched?'on':''}" onclick="toggleWatched('${type}','${m.id}')">${m.watched?'✓ Watched':'Mark'}</button>`
+    ? `<button class="watch-btn ${m.watched?'on':''}" onclick="toggleWatched('${type}','${m.id}')">${m.watched?'✓ Watched':'Watched'}</button>`
     : (m.watched ? `<span class="watch-btn on" style="cursor:default;">✓</span>` : '');
     
   const posterHtml = m.poster && m.poster !== 'N/A' 
