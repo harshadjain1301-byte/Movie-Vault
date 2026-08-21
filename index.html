@@ -17,16 +17,18 @@
 body{margin:0;background:var(--bg); background-image:radial-gradient(circle at 15% 0%, rgba(217,164,65,0.07), transparent 40%), radial-gradient(circle at 85% 20%, rgba(180,72,60,0.06), transparent 45%); color:var(--text);font-family:var(--font-body);min-height:100vh;}
 
 /* Top Bar & Auth */
-.top-bar { position: absolute; top: 20px; left: 20px; display: flex; align-items: center; gap: 15px; z-index: 100; }
-.logo-container { width: 50px; height: 50px; }
+.top-bar { position: absolute; top: 20px; left: 20px; right: 20px; display: flex; justify-content: space-between; align-items: flex-start; z-index: 100; pointer-events: none; }
+.top-bar > * { pointer-events: auto; }
+.logo-container { width: 150px; height: 150px; }
 .logo-container img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
-.auth-container { display: flex; gap: 12px; align-items: center; font-family: var(--font-mono); font-size: 12px; }
-.auth-link { color: var(--gold-dim); text-decoration: none; cursor: pointer; transition: color 0.15s; }
-.auth-link:hover { color: var(--gold); }
-.user-badge { color: var(--text); font-weight: bold; background: var(--bg-card); padding: 4px 10px; border: 1px solid var(--line); border-radius: 4px; }
-.fav-toggle.active { color: var(--green); font-weight: bold; }
 
-.header{padding:60px 24px 24px;text-align:center;border-bottom:1px solid var(--line);position:relative;}
+.auth-container { display: flex; gap: 15px; align-items: center; font-family: var(--font-mono); font-size: 12px; background: var(--bg-panel); padding: 12px 20px; border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+.auth-link { color: var(--gold-dim); text-decoration: none; cursor: pointer; transition: color 0.15s; font-weight: bold; }
+.auth-link:hover { color: var(--gold); }
+.user-badge { color: var(--text); font-weight: bold; background: var(--bg-card); padding: 6px 12px; border: 1px solid var(--gold-dim); border-radius: 4px; }
+.fav-toggle.active { color: var(--green); }
+
+.header{padding:90px 24px 30px;text-align:center;border-bottom:1px solid var(--line);position:relative;}
 .header::before,.header::after{content:"";position:absolute;top:0;bottom:0;width:14px; background-image:repeating-linear-gradient(to bottom,#000 0px,#000 10px,transparent 10px,transparent 20px);opacity:0.35;}
 .header::before{left:0;} .header::after{right:0;}
 h1{font-family:var(--font-display);font-size:clamp(26px,5vw,40px);margin:0 0 6px;color:var(--gold);font-weight:700;}
@@ -81,6 +83,8 @@ h1{font-family:var(--font-display);font-size:clamp(26px,5vw,40px);margin:0 0 6px
 .modal-box { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--bg-panel); border:1px solid var(--line); border-radius:12px; z-index:200; display:none; box-shadow: 0 10px 40px rgba(0,0,0,0.8); overflow:hidden;}
 .auth-modal { width:90%; max-width:360px; padding:24px; }
 .movie-modal { width:90%; max-width:500px; }
+.modal-header { font-family:var(--font-mono); font-size:14px; color:var(--gold); margin-bottom:15px; text-transform:uppercase; font-weight:bold; text-align:center; }
+.status-msg { font-size:11px; margin-bottom:12px; min-height:14px; color:var(--marquee-red); text-align:center;}
 
 /* Movie Popup styling */
 .mm-banner { width:100%; height:250px; background:#111; position:relative; }
@@ -100,7 +104,7 @@ h1{font-family:var(--font-display);font-size:clamp(26px,5vw,40px);margin:0 0 6px
 .mm-btn-insta { background:#1e1a22; border:1px solid var(--line); color:var(--text); }
 .mm-btn-insta:hover { border-color:var(--gold-dim); }
 
-.input-field { width:100%; margin-bottom:12px; background:var(--bg-card); border:1px solid var(--line); color:var(--text); padding:10px; border-radius:4px; font-size:13px; }
+.input-field { width:100%; margin-bottom:12px; background:var(--bg-card); border:1px solid var(--line); color:var(--text); padding:10px; border-radius:4px; font-size:13px; box-sizing: border-box;}
 .btn-primary{font-family:var(--font-mono);font-size:12px;background:var(--gold);border:none;color:#1a1408; padding:10px 14px;border-radius:4px;cursor:pointer;font-weight:700;}
 .btn-secondary{font-family:var(--font-mono);font-size:12px;background:transparent;border:1px solid var(--line); color:var(--text-dim);padding:10px 14px;border-radius:4px;cursor:pointer;}
 
@@ -166,25 +170,25 @@ footer{text-align:center;padding:30px 20px 50px;color:var(--text-dim);font-size:
   </div>
 </div>
 
-<!-- Auth Modal (Sign In / Up) -->
-<div class="modal-box auth-modal" id="loginModal">
-  <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-bottom:15px;text-transform:uppercase;">Sign In / Sign Up</div>
-  <input type="email" id="authEmail" class="input-field" placeholder="Email">
-  <input type="password" id="authPass" class="input-field" placeholder="Password">
-  <div id="loginStatus" style="font-size:11px;margin-bottom:12px;min-height:14px;"></div>
-  <div style="display:flex; gap:8px;">
-    <button class="btn-primary" onclick="handleLogin()" style="flex:1;">Sign In</button>
-    <button class="btn-secondary" onclick="handleSignup()" style="flex:1;">Sign Up</button>
-  </div>
+<!-- Sign In Modal -->
+<div class="modal-box auth-modal" id="signInModal">
+  <div class="modal-header">Sign In</div>
+  <input type="email" id="signInEmail" class="input-field" placeholder="Email">
+  <input type="password" id="signInPass" class="input-field" placeholder="Password">
+  <div id="signInStatus" class="status-msg"></div>
+  <button class="btn-primary" onclick="handleSignIn()" style="width:100%;">Sign In</button>
 </div>
 
-<!-- Profile Setup Modal (First Time) -->
-<div class="modal-box auth-modal" id="profileSetupModal">
-  <div style="font-family:var(--font-mono);font-size:11px;color:var(--gold);margin-bottom:15px;text-transform:uppercase;">Setup Your Profile</div>
-  <input type="text" id="setupUser" class="input-field" placeholder="Username (e.g. Cinephile99)">
-  <input type="text" id="setupFirst" class="input-field" placeholder="First Name">
-  <input type="text" id="setupLast" class="input-field" placeholder="Last Name">
-  <button class="btn-primary" onclick="saveProfileSetup()" style="width:100%;">Complete Setup</button>
+<!-- Sign Up Modal (Merged with Profile Setup) -->
+<div class="modal-box auth-modal" id="signUpModal">
+  <div class="modal-header">Create Account</div>
+  <input type="text" id="signUpUser" class="input-field" placeholder="Username (e.g. Cinephile99)">
+  <input type="text" id="signUpFirst" class="input-field" placeholder="First Name">
+  <input type="text" id="signUpLast" class="input-field" placeholder="Last Name">
+  <input type="email" id="signUpEmail" class="input-field" placeholder="Email Address">
+  <input type="password" id="signUpPass" class="input-field" placeholder="Password (min 6 characters)">
+  <div id="signUpStatus" class="status-msg"></div>
+  <button class="btn-primary" onclick="handleSignUp()" style="width:100%;">Sign Up</button>
 </div>
 
 <footer>Data synced securely to Firebase. Only admins can edit the global list.</footer>
@@ -239,19 +243,19 @@ async function initFirebase(){
     if(user) {
       const uRef = window._fs.doc(db, 'users', user.uid);
       const uSnap = await window._fs.getDoc(uRef);
-      if(!uSnap.exists()) {
-        document.getElementById('modalOverlay').style.display = 'block';
-        document.getElementById('profileSetupModal').style.display = 'block';
-      } else {
+      if(uSnap.exists()) {
         USER_DATA = uSnap.data();
         if(!USER_DATA.favorites) USER_DATA.favorites = [];
+      } else {
+        // Fallback for missing profile
+        USER_DATA = { username: "User", watched: [], favorites: [] }; 
       }
     } else {
       USER_DATA = null;
       showFavsOnly = false;
     }
     updateAuthUI();
-    render();
+    if (DATA) render(); // Wait for DATA to prevent rendering errors
   });
 }
 
@@ -267,52 +271,70 @@ function updateAuthUI(){
     btnAdd.style.display = 'inline-block';
     btnAdd.textContent = isAdmin ? '+ Add Entry' : '+ Suggest Entry';
   } else {
-    container.innerHTML = `<a class="auth-link" onclick="openLogin()">Sign In / Sign Up</a>`;
+    container.innerHTML = `
+      <a class="auth-link" onclick="openSignIn()">Sign In</a>
+      <a class="auth-link" onclick="openSignUp()">Sign Up</a>
+    `;
     document.getElementById('btnManualAdd').style.display = 'none';
   }
 }
 
-function openLogin() {
+function openSignIn() {
   document.getElementById('modalOverlay').style.display = 'block';
-  document.getElementById('loginModal').style.display = 'block';
+  document.getElementById('signInModal').style.display = 'block';
 }
+
+function openSignUp() {
+  document.getElementById('modalOverlay').style.display = 'block';
+  document.getElementById('signUpModal').style.display = 'block';
+}
+
 function closeAllModals() {
   document.getElementById('modalOverlay').style.display = 'none';
   document.querySelectorAll('.modal-box').forEach(m => m.style.display = 'none');
   currentOpenMovie = null;
 }
 
-async function handleLogin(){
-  const e = document.getElementById('authEmail').value.trim(), p = document.getElementById('authPass').value;
-  try{ await window._fs.signInWithEmailAndPassword(auth, e, p); closeAllModals(); }
-  catch(err){ document.getElementById('loginStatus').innerHTML = '<span style="color:red">Login failed</span>'; }
+async function handleSignIn(){
+  const e = document.getElementById('signInEmail').value.trim();
+  const p = document.getElementById('signInPass').value;
+  try{ 
+    await window._auth.signInWithEmailAndPassword(auth, e, p); 
+    closeAllModals(); 
+  }
+  catch(err){ 
+    document.getElementById('signInStatus').innerHTML = 'Login failed — check credentials'; 
+  }
 }
 
-async function handleSignup(){
-  const e = document.getElementById('authEmail').value.trim(), p = document.getElementById('authPass').value;
-  try{ await window._fs.createUserWithEmailAndPassword(auth, e, p); closeAllModals(); }
-  catch(err){ document.getElementById('loginStatus').innerHTML = `<span style="color:red">${err.message}</span>`; }
+async function handleSignUp(){
+  const user = document.getElementById('signUpUser').value.trim();
+  const first = document.getElementById('signUpFirst').value.trim();
+  const last = document.getElementById('signUpLast').value.trim();
+  const e = document.getElementById('signUpEmail').value.trim();
+  const p = document.getElementById('signUpPass').value;
+
+  if(!user) return document.getElementById('signUpStatus').innerHTML = 'Username is required';
+
+  try { 
+    const userCred = await window._auth.createUserWithEmailAndPassword(auth, e, p);
+    USER_DATA = { 
+      username: user, 
+      firstName: first, 
+      lastName: last,
+      watched: [], favorites: []
+    };
+    await window._fs.setDoc(window._fs.doc(db, 'users', userCred.user.uid), USER_DATA);
+    closeAllModals(); 
+  } catch(err) { 
+    document.getElementById('signUpStatus').innerHTML = err.message; 
+  }
 }
 
-async function saveProfileSetup(){
-  const user = document.getElementById('setupUser').value.trim();
-  if(!user) return alert("Username required");
-  USER_DATA = { 
-    username: user, 
-    firstName: document.getElementById('setupFirst').value.trim(), 
-    lastName: document.getElementById('setupLast').value.trim(),
-    watched: [], favorites: []
-  };
-  await window._fs.setDoc(window._fs.doc(db, 'users', currentUser.uid), USER_DATA);
-  closeAllModals();
-  updateAuthUI();
-  render();
-}
-
-async function handleLogout(){ await window._fs.signOut(auth); }
+async function handleLogout(){ await window._auth.signOut(auth); }
 
 function toggleFavView() {
-  if(!currentUser) return openLogin();
+  if(!currentUser) return openSignIn();
   showFavsOnly = !showFavsOnly;
   updateAuthUI();
   render();
@@ -320,17 +342,17 @@ function toggleFavView() {
 
 async function loadData(){
   const main = document.getElementById('main-view');
-  try{
+  try {
     await initFirebase();
     const snap = await window._fs.getDoc(docRef);
-    if(snap.exists()){
+    if (snap.exists()) {
       DATA = snap.data();
       if(!DATA.suggestions) DATA.suggestions = [];
     } else {
       DATA = JSON.parse(JSON.stringify(SEED));
       if(isAdmin) await window._fs.setDoc(docRef, DATA);
     }
-  }catch(e){
+  } catch(e) {
     DATA = JSON.parse(JSON.stringify(SEED));
   }
   render();
@@ -345,13 +367,17 @@ async function saveUserData(){
   try{ await window._fs.updateDoc(window._fs.doc(db, 'users', currentUser.uid), {watched: USER_DATA.watched, favorites: USER_DATA.favorites}); }catch(e){}
 }
 
-function uid(prefix){ return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
-
 function allGenres(){
   const g = new Set();
   if(activeTab === 'movies') DATA.movies.forEach(m=>g.add(m.genre));
   if(activeTab === 'series') DATA.series.forEach(s=>g.add(s.genre));
   return [...g].filter(Boolean).sort();
+}
+
+function matchesQuery(obj, fields){
+  if(!query) return true;
+  const q = query.toLowerCase();
+  return fields.some(f => (obj[f]||'').toLowerCase().includes(q));
 }
 
 function isWatched(id) { return USER_DATA && USER_DATA.watched && USER_DATA.watched.includes(id); }
@@ -383,15 +409,14 @@ async function openMovieModal(id, type) {
   currentOpenMovie = (type==='movie' ? DATA.movies : DATA.series).find(x=>x.id===id);
   if(!currentOpenMovie) return;
   
-  // Auto-fetch poster if missing
   if(!currentOpenMovie.poster || currentOpenMovie.poster === 'N/A') {
     try {
       const res = await fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(currentOpenMovie.title)}&apikey=${OMDB_KEY}`);
       const data = await res.json();
       if(data.Poster && data.Poster !== 'N/A') {
         currentOpenMovie.poster = data.Poster;
-        if(isAdmin) saveGlobal(); // save for everyone if admin triggers it
-        render(); // re-render grid underneath
+        if(isAdmin) saveGlobal();
+        render(); 
       } else {
         currentOpenMovie.poster = 'NONE';
       }
@@ -434,7 +459,7 @@ function updateModalButtons() {
 }
 
 function modalActionWatch() {
-  if(!currentUser) return openLogin();
+  if(!currentUser) return openSignIn();
   const id = currentOpenMovie.id;
   const idx = USER_DATA.watched.indexOf(id);
   if(idx > -1) USER_DATA.watched.splice(idx,1); else USER_DATA.watched.push(id);
@@ -442,7 +467,7 @@ function modalActionWatch() {
 }
 
 function modalActionFav() {
-  if(!currentUser) return openLogin();
+  if(!currentUser) return openSignIn();
   const id = currentOpenMovie.id;
   const idx = USER_DATA.favorites.indexOf(id);
   if(idx > -1) USER_DATA.favorites.splice(idx,1); else USER_DATA.favorites.push(id);
@@ -517,8 +542,9 @@ function renderSeries(){
 }
 
 function render(){
-  document.getElementById('statMovies').textContent = DATA?DATA.movies.length:0;
-  document.getElementById('statSeries').textContent = DATA?DATA.series.length:0;
+  if (!DATA) return; // Prevent crashing before Firebase fetches
+  document.getElementById('statMovies').textContent = DATA.movies.length;
+  document.getElementById('statSeries').textContent = DATA.series.length;
   
   renderTabs();
   renderSidebar();
