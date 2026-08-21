@@ -14,112 +14,137 @@
   --font-mono:'Courier New',monospace;
 }
 *{box-sizing:border-box;}
-body{margin:0;background:var(--bg); background-image:radial-gradient(circle at 15% 0%, rgba(217,164,65,0.07), transparent 40%), radial-gradient(circle at 85% 20%, rgba(180,72,60,0.06), transparent 45%); color:var(--text);font-family:var(--font-body);min-height:100vh;}
+body{margin:0;background:var(--bg); background-image:radial-gradient(circle at 15% 0%, rgba(217,164,65,0.07), transparent 40%), radial-gradient(circle at 85% 20%, rgba(180,72,60,0.06), transparent 45%); color:var(--text);font-family:var(--font-body);min-height:100vh; overflow-x: hidden;}
 
 /* Top Bar & Auth */
 .top-bar { position: absolute; top: 20px; left: 20px; right: 20px; display: flex; justify-content: space-between; align-items: flex-start; z-index: 100; pointer-events: none; }
 .top-bar > * { pointer-events: auto; }
-.logo-container { width: 150px; height: 150px; }
-.logo-container img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
+.logo-container { max-width: 300px; /* Much bigger logo area */ }
+.logo-container img { width: 100%; height: auto; object-fit: contain; }
 
-.auth-container { display: flex; gap: 15px; align-items: center; font-family: var(--font-mono); font-size: 12px; background: var(--bg-panel); padding: 12px 20px; border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+.auth-container { display: flex; gap: 15px; align-items: center; font-family: var(--font-mono); font-size: 14px; background: rgba(23, 20, 26, 0.85); backdrop-filter: blur(5px); padding: 12px 20px; border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
 .auth-link { color: var(--gold-dim); text-decoration: none; cursor: pointer; transition: color 0.15s; font-weight: bold; }
 .auth-link:hover { color: var(--gold); }
 .user-badge { color: var(--text); font-weight: bold; background: var(--bg-card); padding: 6px 12px; border: 1px solid var(--gold-dim); border-radius: 4px; }
 .fav-toggle.active { color: var(--green); }
 
-.header{padding:90px 24px 30px;text-align:center;border-bottom:1px solid var(--line);position:relative;}
+/* Upscaled Header */
+.header{padding:140px 24px 40px;text-align:center;border-bottom:1px solid var(--line);position:relative;}
 .header::before,.header::after{content:"";position:absolute;top:0;bottom:0;width:14px; background-image:repeating-linear-gradient(to bottom,#000 0px,#000 10px,transparent 10px,transparent 20px);opacity:0.35;}
 .header::before{left:0;} .header::after{right:0;}
-h1{font-family:var(--font-display);font-size:clamp(26px,5vw,40px);margin:0 0 6px;color:var(--gold);font-weight:700;}
-.subtitle{color:var(--text-dim);font-size:13px;max-width:560px;margin:0 auto;line-height:1.5;}
-.stats{display:flex;justify-content:center;gap:24px;margin-top:16px;flex-wrap:wrap;}
-.stat{text-align:center;} .stat-num{font-family:var(--font-display);font-size:22px;color:var(--gold);}
-.stat-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);}
+h1{font-family:var(--font-display);font-size:clamp(45px, 8vw, 90px); margin:0 0 12px;color:var(--gold);font-weight:700; letter-spacing: -1px;}
+.subtitle{color:var(--text-dim);font-size:clamp(18px, 3vw, 26px); max-width:800px;margin:0 auto;line-height:1.4;}
+.stats{display:flex;justify-content:center;gap:30px;margin-top:24px;flex-wrap:wrap;}
+.stat{text-align:center;} .stat-num{font-family:var(--font-display);font-size:28px;color:var(--gold);}
+.stat-label{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);}
 
 .tabs{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;padding:18px 16px; border-bottom:1px solid var(--line);background:var(--bg-panel);position:sticky;top:0;z-index:30;}
-.tab-btn{font-family:var(--font-mono);font-size:12px;background:transparent;border:1px solid var(--line); color:var(--text-dim);padding:8px 14px;border-radius:3px;cursor:pointer;transition:all .15s;}
+.tab-btn{font-family:var(--font-mono);font-size:14px;background:transparent;border:1px solid var(--line); color:var(--text-dim);padding:10px 18px;border-radius:4px;cursor:pointer;transition:all .15s;}
 .tab-btn:hover{border-color:var(--gold-dim);color:var(--text);}
 .tab-btn.active{background:var(--gold);border-color:var(--gold);color:#1a1408;font-weight:700;}
 .tab-btn.notify{border-color:var(--green); color:var(--green);}
 
-.app-container { display: flex; max-width: 1200px; margin: 0 auto; align-items: flex-start; }
-.sidebar { width: 240px; padding: 20px; position: sticky; top: 75px; height: calc(100vh - 75px); overflow-y: auto; border-right: 1px solid var(--line); display: none; }
-.sidebar-title { font-family: var(--font-mono); font-size: 11px; color: var(--gold-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
+.app-container { display: flex; max-width: 1400px; margin: 0 auto; align-items: flex-start; }
+.sidebar { width: 260px; padding: 20px; position: sticky; top: 85px; height: calc(100vh - 85px); overflow-y: auto; border-right: 1px solid var(--line); display: none; }
+.sidebar-title { font-family: var(--font-mono); font-size: 13px; color: var(--gold-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
 .sidebar-list { list-style: none; padding: 0; margin: 0 0 20px 0; }
-.sidebar-list li { font-size: 13px; color: var(--text-dim); padding: 6px 10px; cursor: pointer; border-radius: 4px; transition: background 0.15s, color 0.15s; }
+.sidebar-list li { font-size: 15px; color: var(--text-dim); padding: 8px 12px; cursor: pointer; border-radius: 4px; transition: background 0.15s, color 0.15s; margin-bottom: 4px;}
 .sidebar-list li:hover { background: var(--bg-card); color: var(--text); }
 .sidebar-list li.active { background: var(--gold); color: #1a1408; font-weight: bold; }
 
-.main-content { flex: 1; padding: 20px; min-width: 0; }
-.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center; margin-bottom: 20px;}
-.controls input[type=text]{background:var(--bg-card);border:1px solid var(--line);color:var(--text); padding:8px 12px;border-radius:4px;font-size:13px;flex:1;min-width:180px;}
-.chk{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim);cursor:pointer;}
-.btn-add-manual { font-family:var(--font-mono);font-size:11px;background:var(--green);border:none;color:#1a1408;padding:8px 14px;border-radius:3px;cursor:pointer;font-weight:700;display:none; }
+.main-content { flex: 1; padding: 30px; min-width: 0; }
+.controls{display:flex;gap:15px;flex-wrap:wrap;align-items:center; margin-bottom: 30px;}
+.controls input[type=text]{background:var(--bg-card);border:1px solid var(--line);color:var(--text); padding:12px 16px;border-radius:6px;font-size:15px;flex:1;min-width:200px;}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);cursor:pointer;}
+.btn-add-manual { font-family:var(--font-mono);font-size:13px;background:var(--green);border:none;color:#1a1408;padding:12px 18px;border-radius:4px;cursor:pointer;font-weight:700;display:none; }
 
-.genre-section{margin-bottom:34px;}
-.genre-title{font-family:var(--font-display);font-size:22px;color:var(--gold);border-bottom:1px solid var(--gold-dim); padding-bottom:7px;margin-bottom:16px;display:flex;align-items:baseline;gap:10px;}
-.genre-title .count{font-family:var(--font-mono);font-size:12px;color:var(--text-dim);}
-.time-block{margin-bottom:20px;margin-left:4px;}
-.time-title{font-family:var(--font-mono);font-size:12px;letter-spacing:1.5px;text-transform:uppercase; color:var(--marquee-red);margin-bottom:9px;padding-left:10px;border-left:2px solid var(--marquee-red);}
-.lang-group{margin-bottom:12px;margin-left:14px;}
-.lang-title{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;}
-.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+.genre-section{margin-bottom:40px;}
+.genre-title{font-family:var(--font-display);font-size:28px;color:var(--gold);border-bottom:1px solid var(--gold-dim); padding-bottom:10px;margin-bottom:20px;display:flex;align-items:baseline;gap:12px;}
+.genre-title .count{font-family:var(--font-mono);font-size:14px;color:var(--text-dim);}
+.time-block{margin-bottom:24px;margin-left:4px;}
+.time-title{font-family:var(--font-mono);font-size:14px;letter-spacing:1.5px;text-transform:uppercase; color:var(--marquee-red);margin-bottom:12px;padding-left:12px;border-left:3px solid var(--marquee-red);}
 
-.card{background:var(--bg-card);border:1px solid var(--line);border-radius:6px;padding:0; transition:border-color .15s, transform .15s; position:relative; display:flex; flex-direction:column; overflow:hidden; cursor:pointer;}
-.card:hover{border-color:var(--gold-dim);transform:translateY(-2px);}
-.card.watched-fade { opacity: 0.55; }
-.card-poster { width: 100%; height: 160px; object-fit: cover; border-bottom: 1px solid var(--line); background:#111; }
-.card-body { padding: 12px 14px; display:flex; flex-direction:column; flex:1; }
-.card-title{font-weight:600;font-size:14px;line-height:1.3; margin-bottom:4px;}
-.card-year{color:var(--text-dim);font-size:12px;}
-.card-indicators { position:absolute; top:8px; right:8px; display:flex; gap:6px; }
-.badge-ind { background:rgba(0,0,0,0.7); border:1px solid var(--line); padding:4px 6px; border-radius:4px; font-size:10px; font-weight:bold; }
-.badge-watch { color:var(--green); border-color:var(--green); }
+/* BIGGER MOVIE CARDS */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;}
+.card{background:var(--bg-card);border:1px solid var(--line);border-radius:8px;padding:0; transition:border-color .2s, transform .2s; position:relative; display:flex; flex-direction:column; overflow:hidden; cursor:pointer; height: 100%;}
+.card:hover{border-color:var(--gold-dim);transform:translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.5);}
+.card.watched-fade { opacity: 0.4; }
+.card-poster { width: 100%; height: 350px; object-fit: cover; border-bottom: 1px solid var(--line); background:#111; display:flex; align-items:center; justify-content:center; color:var(--text-dim); font-size:12px;}
+.card-body { padding: 16px; display:flex; flex-direction:column; flex:1; background: linear-gradient(to top, var(--bg-card) 70%, transparent); }
+.card-title{font-weight:700;font-size:18px;line-height:1.2; margin-bottom:6px; color:var(--text);}
+.card-year{color:var(--text-dim);font-size:13px; font-family: var(--font-mono);}
+
+/* Top-Left Checkbox on Card */
+.card-checkbox-container { position: absolute; top: 12px; left: 12px; z-index: 10; background: rgba(0,0,0,0.7); border-radius: 6px; padding: 6px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--line); transition: border-color 0.15s;}
+.card-checkbox-container:hover { border-color: var(--green); }
+.card-checkbox-container input[type="checkbox"] { transform: scale(1.3); margin: 0; cursor: pointer; accent-color: var(--green);}
+
+/* Badges (Top Right) */
+.card-indicators { position:absolute; top:12px; right:12px; display:flex; gap:6px; z-index:10;}
+.badge-ind { background:rgba(0,0,0,0.8); border:1px solid var(--line); padding:6px 8px; border-radius:6px; font-size:12px; font-weight:bold; }
 .badge-fav { color:var(--gold); border-color:var(--gold); }
 
 /* Modals */
-.overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:150; display:none; backdrop-filter:blur(3px); }
-.modal-box { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--bg-panel); border:1px solid var(--line); border-radius:12px; z-index:200; display:none; box-shadow: 0 10px 40px rgba(0,0,0,0.8); overflow:hidden;}
-.auth-modal { width:90%; max-width:360px; padding:24px; }
-.movie-modal { width:90%; max-width:500px; }
-.modal-header { font-family:var(--font-mono); font-size:14px; color:var(--gold); margin-bottom:15px; text-transform:uppercase; font-weight:bold; text-align:center; }
-.status-msg { font-size:11px; margin-bottom:12px; min-height:14px; color:var(--marquee-red); text-align:center;}
+.overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:150; display:none; backdrop-filter:blur(5px); }
+.modal-box { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--bg-panel); border:1px solid var(--line); border-radius:12px; z-index:200; display:none; box-shadow: 0 15px 50px rgba(0,0,0,0.9); overflow:hidden;}
+.auth-modal { width:90%; max-width:400px; padding:30px; }
+.modal-header { font-family:var(--font-display); font-size:24px; color:var(--gold); margin-bottom:20px; font-weight:bold; text-align:center; }
+.status-msg { font-size:13px; margin-bottom:15px; min-height:18px; color:var(--marquee-red); text-align:center;}
 
-/* Movie Popup styling */
-.mm-banner { width:100%; height:250px; background:#111; position:relative; }
-.mm-banner img { width:100%; height:100%; object-fit:cover; opacity:0.6; }
-.mm-banner::after { content:''; position:absolute; bottom:0; left:0; right:0; height:120px; background:linear-gradient(transparent, var(--bg-panel)); }
-.mm-close { position:absolute; top:12px; right:12px; background:rgba(0,0,0,0.5); border:1px solid var(--line); color:#fff; border-radius:50%; width:30px; height:30px; cursor:pointer; z-index:10; font-size:16px; line-height:1;}
-.mm-content { padding: 24px; position:relative; margin-top:-60px; z-index:5; }
-.mm-title { font-family:var(--font-display); font-size:28px; color:var(--gold); font-weight:bold; margin:0 0 6px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-.mm-meta { font-family:var(--font-mono); font-size:12px; color:var(--text-dim); margin-bottom: 20px; }
-.mm-note { font-size:13px; color:var(--text); margin-bottom: 24px; line-height:1.5; padding-left:12px; border-left:2px solid var(--gold-dim); }
-.mm-actions { display:flex; flex-direction:column; gap:10px; }
-.mm-btn { display:flex; align-items:center; justify-content:center; gap:8px; padding:12px; border-radius:6px; font-weight:600; font-size:13px; cursor:pointer; text-decoration:none; transition:all 0.15s; }
+/* NEW WIDER MOVIE POPUP */
+.movie-modal { width:90%; max-width:850px; display: flex; flex-direction: row; background: var(--bg-card); align-items: stretch;}
+.mm-left { width: 300px; background: #000; flex-shrink: 0; position: relative;}
+.mm-left img { width: 100%; height: 100%; object-fit: cover; }
+.mm-right { padding: 35px; flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative;}
+.mm-close { position:absolute; top:15px; right:15px; background:rgba(0,0,0,0.5); border:1px solid var(--line); color:#fff; border-radius:50%; width:35px; height:35px; cursor:pointer; z-index:10; font-size:20px; line-height:1; transition: background 0.2s;}
+.mm-close:hover { background: var(--marquee-red); }
+.mm-title { font-family:var(--font-display); font-size:36px; color:var(--gold); font-weight:bold; margin:0 0 10px 0; line-height: 1.1;}
+.mm-meta { font-family:var(--font-mono); font-size:14px; color:var(--text-dim); margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--line);}
+.mm-plot { font-size: 15px; line-height: 1.6; color: var(--text); margin-bottom: 25px; }
+.mm-note { font-size:13px; color:var(--text-dim); margin-bottom: 25px; font-style: italic; }
+.mm-actions { display:flex; flex-direction:column; gap:12px; margin-top: auto; }
+.mm-btn { display:flex; align-items:center; justify-content:center; gap:8px; padding:14px; border-radius:6px; font-weight:bold; font-size:14px; cursor:pointer; text-decoration:none; transition:all 0.2s; font-family: var(--font-mono);}
 .mm-btn-watch { background:transparent; border:1px solid var(--line); color:var(--text); }
 .mm-btn-watch.active { background:var(--green); border-color:var(--green); color:#111; }
 .mm-btn-fav { background:transparent; border:1px solid var(--line); color:var(--text); }
 .mm-btn-fav.active { background:var(--gold); border-color:var(--gold); color:#111; }
 .mm-btn-insta { background:#1e1a22; border:1px solid var(--line); color:var(--text); }
-.mm-btn-insta:hover { border-color:var(--gold-dim); }
+.mm-btn-insta:hover { border-color:var(--gold-dim); color: var(--gold); }
 
-.input-field { width:100%; margin-bottom:12px; background:var(--bg-card); border:1px solid var(--line); color:var(--text); padding:10px; border-radius:4px; font-size:13px; box-sizing: border-box;}
-.btn-primary{font-family:var(--font-mono);font-size:12px;background:var(--gold);border:none;color:#1a1408; padding:10px 14px;border-radius:4px;cursor:pointer;font-weight:700;}
-.btn-secondary{font-family:var(--font-mono);font-size:12px;background:transparent;border:1px solid var(--line); color:var(--text-dim);padding:10px 14px;border-radius:4px;cursor:pointer;}
+/* Responsive adjustments for mobile modal */
+@media (max-width: 768px) {
+  .movie-modal { flex-direction: column; max-height: 90vh; overflow-y: auto;}
+  .mm-left { width: 100%; height: 300px; }
+}
 
-.empty-msg{color:var(--text-dim);font-size:13px;padding:20px;text-align:center;}
-.section-note{color:var(--text-dim);font-size:13px;line-height:1.6;margin-bottom:20px; background:var(--bg-panel);border:1px solid var(--line);border-radius:6px;padding:14px 16px;}
-.loading{text-align:center;padding:60px;color:var(--text-dim);}
-footer{text-align:center;padding:30px 20px 50px;color:var(--text-dim);font-size:11px;font-family:var(--font-mono);}
+.input-field { width:100%; margin-bottom:15px; background:var(--bg-panel); border:1px solid var(--line); color:var(--text); padding:14px; border-radius:6px; font-size:15px; box-sizing: border-box;}
+.btn-primary{font-family:var(--font-mono);font-size:14px;background:var(--gold);border:none;color:#1a1408; padding:14px 20px;border-radius:6px;cursor:pointer;font-weight:700; transition: background 0.15s;}
+.btn-primary:hover{background:#ebd08d;}
+.btn-secondary{font-family:var(--font-mono);font-size:14px;background:transparent;border:1px solid var(--line); color:var(--text-dim);padding:14px 20px;border-radius:6px;cursor:pointer;}
+
+.empty-msg{color:var(--text-dim);font-size:15px;padding:40px;text-align:center;}
+.section-note{color:var(--text-dim);font-size:14px;line-height:1.6;margin-bottom:24px; background:var(--bg-panel);border:1px solid var(--line);border-radius:8px;padding:20px;}
+.loading{text-align:center;padding:80px;color:var(--text-dim); font-size: 18px;}
+footer{text-align:center;padding:40px 20px 60px;color:var(--text-dim);font-size:13px;font-family:var(--font-mono); border-top: 1px solid var(--line); margin-top: 50px;}
+
+.admin-login-link { color: var(--text-dim); text-decoration: none; border-bottom: 1px dashed var(--line); transition: color 0.2s;}
+.admin-login-link:hover { color: var(--gold-dim); }
+
+/* Needs review table styles */
+.unid-item{background:var(--bg-card);border:1px solid var(--line);border-radius:8px;padding:20px; margin-bottom: 15px;}
+.unid-top{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;align-items:flex-start;}
+.unid-note{color:var(--text);font-size:15px;flex:1;}
+.resolve-btn{font-family:var(--font-mono);font-size:13px;background:transparent;border:1px solid var(--gold-dim); color:var(--gold-dim);padding:8px 16px;border-radius:4px;cursor:pointer;margin-top:12px;}
 </style>
 </head>
 <body>
 
 <div class="top-bar">
+  <!-- NEW LOGO GOES HERE -->
   <div class="logo-container">
-    <img src="https://fabulous-dolphin.staticdomains.app/6218bfc829c0772381d4ee6c296c531b.png" alt="Logo">
+    <img src="https://fabulous-dolphin.staticdomains.app/UpdatedLogo.jpeg" alt="Logo">
   </div>
+  <!-- USER AUTH (No admin here) -->
   <div id="authContainer" class="auth-container">
     <!-- Populated by JS -->
   </div>
@@ -127,11 +152,10 @@ footer{text-align:center;padding:30px 20px 50px;color:var(--text-dim);font-size:
 
 <div class="header">
   <h1>The Movie Vault</h1>
-  <div class="subtitle">Where your movie life is organized.</div>
+  <div class="subtitle">Where your movie life is brilliantly organized.</div>
   <div class="stats">
     <div class="stat"><div class="stat-num" id="statMovies">-</div><div class="stat-label">Movies</div></div>
     <div class="stat"><div class="stat-num" id="statSeries">-</div><div class="stat-label">Series</div></div>
-    <div class="stat"><div class="stat-num" id="statUnid">-</div><div class="stat-label">Needs Review</div></div>
   </div>
 </div>
 
@@ -153,33 +177,39 @@ footer{text-align:center;padding:30px 20px 50px;color:var(--text-dim);font-size:
 <!-- Modals & Overlays -->
 <div class="overlay" id="modalOverlay" onclick="closeAllModals()"></div>
 
-<!-- Movie Detail Popup -->
+<!-- Redesigned Movie Detail Popup -->
 <div class="modal-box movie-modal" id="movieDetailModal">
-  <button class="mm-close" onclick="closeAllModals()">&times;</button>
-  <div class="mm-banner" id="mmBanner"></div>
-  <div class="mm-content">
+  <div class="mm-left" id="mmBanner">
+     <!-- Poster injected here -->
+  </div>
+  <div class="mm-right">
+    <button class="mm-close" onclick="closeAllModals()">&times;</button>
     <h2 class="mm-title" id="mmTitle">Title</h2>
     <div class="mm-meta" id="mmMeta">Year • Genre • Language</div>
+    
+    <!-- NEW PLOT SECTION -->
+    <div class="mm-plot" id="mmPlot">Loading plot...</div>
+    
     <div class="mm-note" id="mmNote" style="display:none;"></div>
     
     <div class="mm-actions">
       <button class="mm-btn mm-btn-watch" id="btnMmWatch" onclick="modalActionWatch()">Mark as Watched</button>
       <button class="mm-btn mm-btn-fav" id="btnMmFav" onclick="modalActionFav()">Add to Favorites</button>
-      <a class="mm-btn mm-btn-insta" id="btnMmInsta" href="#" target="_blank" rel="noopener">View Instagram Post ↗</a>
+      <a class="mm-btn mm-btn-insta" id="btnMmInsta" href="#" target="_blank" rel="noopener">View Source Link ↗</a>
     </div>
   </div>
 </div>
 
-<!-- Sign In Modal -->
+<!-- User Sign In Modal -->
 <div class="modal-box auth-modal" id="signInModal">
-  <div class="modal-header">Sign In</div>
+  <div class="modal-header">User Sign In</div>
   <input type="email" id="signInEmail" class="input-field" placeholder="Email">
   <input type="password" id="signInPass" class="input-field" placeholder="Password">
   <div id="signInStatus" class="status-msg"></div>
   <button class="btn-primary" onclick="handleSignIn()" style="width:100%;">Sign In</button>
 </div>
 
-<!-- Sign Up Modal (Merged with Profile Setup) -->
+<!-- User Sign Up Modal -->
 <div class="modal-box auth-modal" id="signUpModal">
   <div class="modal-header">Create Account</div>
   <input type="text" id="signUpUser" class="input-field" placeholder="Username (e.g. Cinephile99)">
@@ -191,7 +221,19 @@ footer{text-align:center;padding:30px 20px 50px;color:var(--text-dim);font-size:
   <button class="btn-primary" onclick="handleSignUp()" style="width:100%;">Sign Up</button>
 </div>
 
-<footer>Data synced securely to Firebase. Only admins can edit the global list.</footer>
+<!-- Admin Login Modal -->
+<div class="modal-box auth-modal" id="adminLoginModal">
+  <div class="modal-header">Admin Access</div>
+  <input type="email" id="adminEmail" class="input-field" placeholder="Admin Email">
+  <input type="password" id="adminPass" class="input-field" placeholder="Admin Password">
+  <div id="adminLoginStatus" class="status-msg"></div>
+  <button class="btn-primary" onclick="handleAdminLogin()" style="width:100%;">Log In to Vault Editor</button>
+</div>
+
+<footer>
+  Data synced securely to Firebase. <br><br>
+  <a href="#" class="admin-login-link" onclick="openAdminLogin(); return false;">Admin Access</a>
+</footer>
 
 <script>
 // --- PUT YOUR FIREBASE EMAIL HERE ---
@@ -216,6 +258,40 @@ let docRef = null;
 let auth = null;
 let currentUser = null;
 let isAdmin = false;
+
+// INTERSECTION OBSERVER FOR BACKGROUND POSTER LOADING
+const lazyLoadObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting) {
+      const img = entry.target;
+      const id = img.dataset.id;
+      const title = img.dataset.title;
+      if(img.dataset.loaded === 'false') {
+        img.dataset.loaded = 'true';
+        fetchPosterInBackground(id, title, img);
+      }
+    }
+  });
+}, { rootMargin: '200px' });
+
+async function fetchPosterInBackground(id, title, imgEl) {
+  try {
+    const res = await fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=${OMDB_KEY}`);
+    const data = await res.json();
+    let item = DATA.movies.find(m=>m.id===id) || DATA.series.find(s=>s.id===id);
+    if(data.Poster && data.Poster !== 'N/A') {
+      imgEl.src = data.Poster;
+      imgEl.classList.remove('lazy-poster');
+      if(item) {
+         item.poster = data.Poster;
+         if(isAdmin) saveGlobal(); 
+      }
+    } else {
+      imgEl.parentElement.innerHTML = '<div class="card-poster" style="display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:12px;">No Poster</div>';
+      if(item) item.poster = 'NONE';
+    }
+  } catch(e) { }
+}
 
 async function initFirebase(){
   const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
@@ -247,7 +323,6 @@ async function initFirebase(){
         USER_DATA = uSnap.data();
         if(!USER_DATA.favorites) USER_DATA.favorites = [];
       } else {
-        // Fallback for missing profile
         USER_DATA = { username: "User", watched: [], favorites: [] }; 
       }
     } else {
@@ -255,13 +330,13 @@ async function initFirebase(){
       showFavsOnly = false;
     }
     updateAuthUI();
-    if (DATA) render(); // Wait for DATA to prevent rendering errors
+    if (DATA) render(); 
   });
 }
 
 function updateAuthUI(){
   const container = document.getElementById('authContainer');
-  if(currentUser && USER_DATA) {
+  if(currentUser && USER_DATA && !isAdmin) { // Regular User
     container.innerHTML = `
       <a class="auth-link fav-toggle ${showFavsOnly?'active':''}" onclick="toggleFavView()">★ Favorites</a>
       <a class="auth-link" onclick="handleLogout()">Sign Out</a>
@@ -269,7 +344,16 @@ function updateAuthUI(){
     `;
     const btnAdd = document.getElementById('btnManualAdd');
     btnAdd.style.display = 'inline-block';
-    btnAdd.textContent = isAdmin ? '+ Add Entry' : '+ Suggest Entry';
+    btnAdd.textContent = '+ Suggest Entry';
+  } else if (currentUser && isAdmin) { // Admin User
+    container.innerHTML = `
+      <a class="auth-link fav-toggle ${showFavsOnly?'active':''}" onclick="toggleFavView()">★ Favorites</a>
+      <a class="auth-link" onclick="handleLogout()">Sign Out</a>
+      <div class="user-badge" style="color:var(--gold);">Admin Mode</div>
+    `;
+    const btnAdd = document.getElementById('btnManualAdd');
+    btnAdd.style.display = 'inline-block';
+    btnAdd.textContent = '+ Add Entry';
   } else {
     container.innerHTML = `
       <a class="auth-link" onclick="openSignIn()">Sign In</a>
@@ -279,15 +363,9 @@ function updateAuthUI(){
   }
 }
 
-function openSignIn() {
-  document.getElementById('modalOverlay').style.display = 'block';
-  document.getElementById('signInModal').style.display = 'block';
-}
-
-function openSignUp() {
-  document.getElementById('modalOverlay').style.display = 'block';
-  document.getElementById('signUpModal').style.display = 'block';
-}
+function openSignIn() { document.getElementById('modalOverlay').style.display='block'; document.getElementById('signInModal').style.display='block'; }
+function openSignUp() { document.getElementById('modalOverlay').style.display='block'; document.getElementById('signUpModal').style.display='block'; }
+function openAdminLogin() { document.getElementById('modalOverlay').style.display='block'; document.getElementById('adminLoginModal').style.display='block'; }
 
 function closeAllModals() {
   document.getElementById('modalOverlay').style.display = 'none';
@@ -296,15 +374,9 @@ function closeAllModals() {
 }
 
 async function handleSignIn(){
-  const e = document.getElementById('signInEmail').value.trim();
-  const p = document.getElementById('signInPass').value;
-  try{ 
-    await window._auth.signInWithEmailAndPassword(auth, e, p); 
-    closeAllModals(); 
-  }
-  catch(err){ 
-    document.getElementById('signInStatus').innerHTML = 'Login failed — check credentials'; 
-  }
+  const e = document.getElementById('signInEmail').value.trim(); const p = document.getElementById('signInPass').value;
+  try{ await window._auth.signInWithEmailAndPassword(auth, e, p); closeAllModals(); }
+  catch(err){ document.getElementById('signInStatus').innerHTML = 'Login failed — check credentials'; }
 }
 
 async function handleSignUp(){
@@ -313,22 +385,19 @@ async function handleSignUp(){
   const last = document.getElementById('signUpLast').value.trim();
   const e = document.getElementById('signUpEmail').value.trim();
   const p = document.getElementById('signUpPass').value;
-
   if(!user) return document.getElementById('signUpStatus').innerHTML = 'Username is required';
-
   try { 
     const userCred = await window._auth.createUserWithEmailAndPassword(auth, e, p);
-    USER_DATA = { 
-      username: user, 
-      firstName: first, 
-      lastName: last,
-      watched: [], favorites: []
-    };
+    USER_DATA = { username: user, firstName: first, lastName: last, watched: [], favorites: [] };
     await window._fs.setDoc(window._fs.doc(db, 'users', userCred.user.uid), USER_DATA);
     closeAllModals(); 
-  } catch(err) { 
-    document.getElementById('signUpStatus').innerHTML = err.message; 
-  }
+  } catch(err) { document.getElementById('signUpStatus').innerHTML = err.message; }
+}
+
+async function handleAdminLogin(){
+  const e = document.getElementById('adminEmail').value.trim(); const p = document.getElementById('adminPass').value;
+  try{ await window._auth.signInWithEmailAndPassword(auth, e, p); closeAllModals(); }
+  catch(err){ document.getElementById('adminLoginStatus').innerHTML = 'Admin login failed'; }
 }
 
 async function handleLogout(){ await window._auth.signOut(auth); }
@@ -352,20 +421,12 @@ async function loadData(){
       DATA = JSON.parse(JSON.stringify(SEED));
       if(isAdmin) await window._fs.setDoc(docRef, DATA);
     }
-  } catch(e) {
-    DATA = JSON.parse(JSON.stringify(SEED));
-  }
+  } catch(e) { DATA = JSON.parse(JSON.stringify(SEED)); }
   render();
 }
 
-async function saveGlobal(){
-  if(!currentUser) return;
-  try{ await window._fs.setDoc(docRef, DATA); }catch(e){}
-}
-async function saveUserData(){
-  if(!currentUser || !USER_DATA) return;
-  try{ await window._fs.updateDoc(window._fs.doc(db, 'users', currentUser.uid), {watched: USER_DATA.watched, favorites: USER_DATA.favorites}); }catch(e){}
-}
+async function saveGlobal(){ if(isAdmin){ try{ await window._fs.setDoc(docRef, DATA); }catch(e){} } }
+async function saveUserData(){ if(currentUser && USER_DATA){ try{ await window._fs.updateDoc(window._fs.doc(db, 'users', currentUser.uid), {watched: USER_DATA.watched, favorites: USER_DATA.favorites}); }catch(e){} } }
 
 function allGenres(){
   const g = new Set();
@@ -376,17 +437,24 @@ function allGenres(){
 
 function matchesQuery(obj, fields){
   if(!query) return true;
-  const q = query.toLowerCase();
-  return fields.some(f => (obj[f]||'').toLowerCase().includes(q));
+  return fields.some(f => (obj[f]||'').toLowerCase().includes(query.toLowerCase()));
 }
 
 function isWatched(id) { return USER_DATA && USER_DATA.watched && USER_DATA.watched.includes(id); }
 function isFav(id) { return USER_DATA && USER_DATA.favorites && USER_DATA.favorites.includes(id); }
 
+function toggleCardWatch(id) {
+  if(!currentUser) { openSignIn(); return; }
+  const idx = USER_DATA.watched.indexOf(id);
+  if(idx > -1) USER_DATA.watched.splice(idx,1); else USER_DATA.watched.push(id);
+  saveUserData();
+  render();
+}
+
 function renderTabs(){
   const tabs = [{id:'movies', label:'Movies'}, {id:'series', label:'Series'}];
-  if(isAdmin && DATA.unidentified) tabs.push({id:'unidentified', label:'Needs Review'});
-  if(isAdmin && DATA.suggestions && DATA.suggestions.length>0) tabs.push({id:'suggestions', label:`Suggestions (${DATA.suggestions.length})`});
+  if(isAdmin && DATA.unidentified && DATA.unidentified.length > 0) tabs.push({id:'unidentified', label:'Needs Review'});
+  if(isAdmin && DATA.suggestions && DATA.suggestions.length > 0) tabs.push({id:'suggestions', label:`Suggestions (${DATA.suggestions.length})`});
   if((activeTab==='unidentified' || activeTab==='suggestions') && !isAdmin) activeTab='movies';
   
   const el = document.getElementById('tabs');
@@ -409,35 +477,42 @@ async function openMovieModal(id, type) {
   currentOpenMovie = (type==='movie' ? DATA.movies : DATA.series).find(x=>x.id===id);
   if(!currentOpenMovie) return;
   
-  if(!currentOpenMovie.poster || currentOpenMovie.poster === 'N/A') {
-    try {
-      const res = await fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(currentOpenMovie.title)}&apikey=${OMDB_KEY}`);
-      const data = await res.json();
-      if(data.Poster && data.Poster !== 'N/A') {
-        currentOpenMovie.poster = data.Poster;
-        if(isAdmin) saveGlobal();
-        render(); 
-      } else {
-        currentOpenMovie.poster = 'NONE';
-      }
-    } catch(e) {}
-  }
-
   document.getElementById('mmTitle').textContent = currentOpenMovie.title;
   document.getElementById('mmMeta').textContent = `${currentOpenMovie.year||'Year'} • ${currentOpenMovie.genre||'Genre'} • ${currentOpenMovie.language||'Lang'}`;
   
   const n = document.getElementById('mmNote');
   if(currentOpenMovie.note) { n.style.display='block'; n.textContent = currentOpenMovie.note; } else n.style.display='none';
   
+  const plotBox = document.getElementById('mmPlot');
+  plotBox.textContent = currentOpenMovie.plot || "Fetching plot details...";
+
   const banner = document.getElementById('mmBanner');
-  banner.innerHTML = (currentOpenMovie.poster && currentOpenMovie.poster!=='NONE') ? `<img src="${currentOpenMovie.poster}">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#444;">No Poster</div>`;
+  banner.innerHTML = (currentOpenMovie.poster && currentOpenMovie.poster!=='NONE') ? `<img src="${currentOpenMovie.poster}">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#444;font-size:14px;">No Poster Available</div>`;
   
+  // Fetch details if missing
+  if(!currentOpenMovie.plot || !currentOpenMovie.poster) {
+    try {
+      const res = await fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(currentOpenMovie.title)}&plot=short&apikey=${OMDB_KEY}`);
+      const data = await res.json();
+      
+      if(data.Plot && data.Plot !== 'N/A') currentOpenMovie.plot = data.Plot; else currentOpenMovie.plot = "Plot summary not available for this title.";
+      if(data.Poster && data.Poster !== 'N/A') currentOpenMovie.poster = data.Poster; else currentOpenMovie.poster = 'NONE';
+      
+      plotBox.textContent = currentOpenMovie.plot;
+      banner.innerHTML = (currentOpenMovie.poster!=='NONE') ? `<img src="${currentOpenMovie.poster}">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#444;font-size:14px;">No Poster Available</div>`;
+      
+      if(isAdmin) saveGlobal(); // Save updated details silently
+    } catch(e) {
+      plotBox.textContent = "Unable to load plot details.";
+    }
+  }
+
   const btnInsta = document.getElementById('btnMmInsta');
   if(currentOpenMovie.url) { btnInsta.style.display='flex'; btnInsta.href = currentOpenMovie.url; } else { btnInsta.style.display='none'; }
   
   updateModalButtons();
   document.getElementById('modalOverlay').style.display = 'block';
-  document.getElementById('movieDetailModal').style.display = 'block';
+  document.getElementById('movieDetailModal').style.display = 'flex';
 }
 
 function updateModalButtons() {
@@ -460,10 +535,8 @@ function updateModalButtons() {
 
 function modalActionWatch() {
   if(!currentUser) return openSignIn();
-  const id = currentOpenMovie.id;
-  const idx = USER_DATA.watched.indexOf(id);
-  if(idx > -1) USER_DATA.watched.splice(idx,1); else USER_DATA.watched.push(id);
-  saveUserData(); updateModalButtons(); render();
+  toggleCardWatch(currentOpenMovie.id);
+  updateModalButtons();
 }
 
 function modalActionFav() {
@@ -477,22 +550,44 @@ function modalActionFav() {
 function movieCard(m, type){
   const w = isWatched(m.id);
   const f = isFav(m.id);
-  const posterHtml = m.poster && m.poster !== 'N/A' && m.poster !== 'NONE'
+  
+  // Lazy loading image tag
+  const posterHtml = (m.poster && m.poster !== 'N/A' && m.poster !== 'NONE')
     ? `<img src="${m.poster}" class="card-poster" loading="lazy">` 
-    : `<div class="card-poster" style="display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:11px;">No Poster</div>`;
+    : (!m.poster || m.poster === '') 
+      ? `<img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-id="${m.id}" data-title="${m.title}" data-loaded="false" class="card-poster lazy-poster" alt="Loading...">`
+      : `<div class="card-poster" style="display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:12px;">No Poster</div>`;
 
   let inds = '';
-  if(w) inds += `<div class="badge-ind badge-watch">✓</div>`;
   if(f) inds += `<div class="badge-ind badge-fav">★</div>`;
 
   return `<div class="card ${w?'watched-fade':''}" onclick="openMovieModal('${m.id}','${type}')">
-      ${posterHtml}
+      <div class="card-checkbox-container" onclick="event.stopPropagation(); toggleCardWatch('${m.id}')">
+         <input type="checkbox" ${w ? 'checked' : ''} onclick="event.stopPropagation(); toggleCardWatch('${m.id}')">
+      </div>
       ${inds ? `<div class="card-indicators">${inds}</div>` : ''}
+      ${posterHtml}
       <div class="card-body">
         <div class="card-title">${m.title}</div>
         <div class="card-year">${m.year? m.year+' • ':''}${m.subgenre||''}</div>
       </div>
     </div>`;
+}
+
+function renderUnidentified(){
+  if(!DATA.unidentified || !isAdmin) return;
+  const main = document.getElementById('main-view');
+  const filtered = DATA.unidentified.filter(u=>!u.resolved).filter(u => matchesQuery(u, ['note']));
+  let html = `<div class="section-note"><b>${filtered.length} posts</b> need review. <br>Click "Open Source Link" to view the reel, figure out the movie, then add it.</div>`;
+  filtered.forEach(u=>{
+    html += `<div class="unid-item">
+      <div class="unid-top">
+        <span class="unid-note"><b>Note:</b> ${u.note}</span>
+        <a href="${u.url}" target="_blank" rel="noopener" style="color:var(--gold); font-family:var(--font-mono); font-weight:bold; font-size:14px;">Open Source Link ↗</a>
+      </div>
+    </div>`;
+  });
+  main.innerHTML = html;
 }
 
 function renderMovies(){
@@ -502,7 +597,7 @@ function renderMovies(){
   if(showFavsOnly) filtered = filtered.filter(m=>isFav(m.id));
   if(selectedGenreFilter !== 'All') filtered = filtered.filter(m=>m.genre === selectedGenreFilter);
   
-  if(filtered.length===0){ main.innerHTML = '<div class="empty-msg">No matches.</div>'; return; }
+  if(filtered.length===0){ main.innerHTML = '<div class="empty-msg">No movies found.</div>'; return; }
 
   const genres = [...new Set(filtered.map(m=>m.genre))].sort();
   let html = '';
@@ -519,6 +614,9 @@ function renderMovies(){
     html += `</div>`;
   });
   main.innerHTML = html;
+  
+  // Attach observers to new lazy-posters
+  document.querySelectorAll('.lazy-poster').forEach(img => lazyLoadObserver.observe(img));
 }
 
 function renderSeries(){
@@ -529,7 +627,7 @@ function renderSeries(){
   if(selectedGenreFilter !== 'All') filtered = filtered.filter(m=>m.genre === selectedGenreFilter);
 
   let html = '';
-  if(filtered.length===0){ html += '<div class="empty-msg">No matches.</div>'; main.innerHTML = html; return; }
+  if(filtered.length===0){ html += '<div class="empty-msg">No series found.</div>'; main.innerHTML = html; return; }
   
   const genres = [...new Set(filtered.map(s=>s.genre))].sort();
   genres.forEach(genre=>{
@@ -539,10 +637,13 @@ function renderSeries(){
     html += `</div></div>`;
   });
   main.innerHTML = html;
+  
+  // Attach observers to new lazy-posters
+  document.querySelectorAll('.lazy-poster').forEach(img => lazyLoadObserver.observe(img));
 }
 
 function render(){
-  if (!DATA) return; // Prevent crashing before Firebase fetches
+  if (!DATA) return; 
   document.getElementById('statMovies').textContent = DATA.movies.length;
   document.getElementById('statSeries').textContent = DATA.series.length;
   
@@ -550,6 +651,7 @@ function render(){
   renderSidebar();
   if(activeTab==='movies') renderMovies();
   else if(activeTab==='series') renderSeries();
+  else if(activeTab==='unidentified') renderUnidentified();
 }
 
 document.getElementById('searchBox').addEventListener('input', (e)=>{ query = e.target.value; render(); });
